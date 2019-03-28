@@ -2,7 +2,39 @@ import json
 import ast
 import csv,os
 import re
+import pickle
 	
+
+def parse_title(snack_title):
+	snack_title = snack_title.replace('&amp;', '&')
+	snack_title = snack_title.replace('&quot;', '\'')
+	snack_title = snack_title.replace('&#12288;', ' ')
+	parts = []
+	if ',' in snack_title:
+		parts = snack_title.split(',')
+	elif '(' in snack_title:
+		parts = snack_title.split('(')
+	if len(parts) == 1 or parts == []:
+		'TRUE'
+		return snack_title
+
+	final_title = ''
+	parts = [x.strip() for x in parts]
+	for i in range(len(parts)):
+			if i == 0:
+				final_title += parts[i]
+			else:
+				if (not any(char.isdigit() for char in parts[i])) and any(char.isalpha() for char in parts[i]):
+					final_title = final_title + ' ' + parts[i]
+	if final_title == '':
+		print snack_title
+		print(parts)
+
+	if '&amp;' in final_title:
+		final_title.replace('&amp;', 'and')
+		print(final_title)
+	return final_title
+
 """Returns list of dictionaries for every entry in the amazon dataset"""
 def json_to_food_lst(file_name):
 	food_file = open(file_name, 'r')
@@ -17,9 +49,17 @@ def json_to_food_lst(file_name):
 	#print(len(food_lst))
 	return food_lst
 
-removed_fields = ['title', 'imUrl', 'asin', 'salesRank', 'categories']
+removed_fields = ['title', 'imUrl', 'salesRank', 'categories']
+# removed_fields = ['title', 'asin', 'imUrl', 'salesRank', 'categories']
+
 wanted_fields = [('price', None), ('description',''), ('brand', ''), ('also_viewed', []), ('also_bought',[])]
 # all_fields = ['asin', 'description', 'title', 'imUrl', 'related', 'salesRank', 'categories', 'price', 'brand']
+
+
+snack_titles = []
+asin_to_title = {}
+old_to_new_title = {}
+title_to_asin = {}
 
 """Returns a dictionary of food items after filtering out non-snack items"""
 def filter_snacks(data):
@@ -36,12 +76,18 @@ def filter_snacks(data):
 
 	filtered_products = {}
 
-	for title, info in data.items():
+	for old_title, info in data.items():
 	    desc = info["description"]
-	    if "snack" in desc.lower() and not contains_word(desc, bad_words):
-	    	filtered_products[title] = info
 
+	    if "snack" in desc.lower() and not contains_word(desc, bad_words):
+	    	title = parse_title(old_title)
+	    	old_to_new_title[old_title] = title
+	    	snack_titles.append(title)
+	    	asin_to_title[info['asin']] = title
+	    	title_to_asin[title] = info['asin']
+	    	filtered_products[title] = info
 	return filtered_products
+
 
 """Turns list of dictionaries into a single dictionary with snack titles as keys and 
 dictionary of other data as values"""
@@ -71,17 +117,33 @@ def food_lst_to_dict(lst):
 				d['also_viewed'] = []
 			d.pop('related')
 		for (f2,val) in wanted_fields:
-			if f2 not in d_keys:
+			if f2 not in d.keys():
 				d[f2] = val
 		food_dict[title] = d
+
 	return food_dict
 
 
-all_foods = json_to_food_lst("Data/meta_Grocery_and_Gourmet_Food.json")
+all_foods = json_to_food_lst("/Users/Judy/Desktop/meta_Grocery_and_Gourmet_Food.json")
 filtered_snacks = filter_snacks(food_lst_to_dict(all_foods))
+# print(filtered_snacks)
+# print(snack_titles)
+with open('Data/snack_titles.pickle', 'w') as f:
+	pickle.dump(snack_titles, f)
 
-with open('Data/filtered_snacks.json', 'w') as file:
-    json.dump(filtered_snacks, file)
+with open ('Data/asin_to_titles.pickle', 'w') as f:
+	pickle.dump(asin_to_title,f)
+
+with open('Data/titles_to_asin.pickle', 'w') as f:
+	pickle.dump(title_to_asin, f)
+
+with open('Data/old_to_new_title.pickle', 'w') as f:
+	pickle.dump(old_to_new_title,f)
+
+with open('Data/fixed_filtered_snacks.pickle', 'w') as f:
+	pickle.dump(filtered_snacks, f)
+# with open('Data/filtered_snacks.json', 'w') as file:
+#     json.dump(filtered_snacks, file)
 
 
     
