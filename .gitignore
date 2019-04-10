@@ -5,3 +5,4 @@ vagrant/.vagrant
 vagrant/site.retry
 vagrant/a4keypair.pem
 .DS_Store
+Data/meta_Grocery_and_Gourmet_Food.json
