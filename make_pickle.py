@@ -48,4 +48,22 @@ with open('Data/FINAL_snacks_data.pickle', 'w') as f:
 	pickle.dump(new_titles_dict, f)
 
 
+title_to_ind = {}
+ind_to_title = {}
+
+new_titles_lst = new_titles_dict.keys()
+for i, title in enumerate(new_titles_lst):
+	title_to_ind[title] = i
+	ind_to_title[i] = title
+
+# print(title_to_ind)
+# print(ind_to_title)
+
+with open('Data/title_to_index', 'w') as f:
+	pickle.dump(title_to_ind,f)
+
+with open('Data/index_to_title', 'w') as f:
+	pickle.dump(ind_to_title,f)
+
+
 
