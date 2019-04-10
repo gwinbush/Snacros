@@ -46,7 +46,7 @@ for old_title, data in old_titles_data.items():
 	data['also_bought'] = also_bought
 	data['also_viewed'] = also_viewed
 	new_titles_dict[new_title] = data
-print(new_titles_dict)
+# print(new_titles_dict)
 with open('Data/FINAL_snacks_data.pickle', 'w') as f:
 	pickle.dump(new_titles_dict, f)
 
