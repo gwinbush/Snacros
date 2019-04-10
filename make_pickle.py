@@ -59,10 +59,10 @@ for i, title in enumerate(new_titles_lst):
 # print(title_to_ind)
 # print(ind_to_title)
 
-with open('Data/title_to_index', 'w') as f:
+with open('Data/title_to_index.pickle', 'w') as f:
 	pickle.dump(title_to_ind,f)
 
-with open('Data/index_to_title', 'w') as f:
+with open('Data/index_to_title.pickle', 'w') as f:
 	pickle.dump(ind_to_title,f)
 
 
