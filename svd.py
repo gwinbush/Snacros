@@ -43,19 +43,30 @@ def closest_words(word_in, k = 10):
 	asort = np.argsort(-sims)[:k+1]
 	return [(index_to_word[i],sims[i]/sims[asort[0]]) for i in asort[1:]]
 
+
+"""Returns the 10 closest snacks to the input word and their scores"""
+def closest_snacks_to_word(word_in, k =  10):
+	if word_in not in word_to_index: 
+		return "Not in vocab."
+	sims = docs_compressed.dot(words_compressed[word_to_index[word_in],:])
+	asort = np.argsort(-sims)[:k+1]
+	return [(data_lst[i][0],sims[i]/sims[asort[0]]) for i in asort[1:]]
+
 # print(closest_words("cookie"))
+# print(closest_projects_to_word(''))
 
 docs_compressed = normalize(docs_compressed, axis = 1)
+
 """Returns the 10 closest snacks to the input snack index and their scores."""
-def closest_snacks(snack_index_in, k = 5):
+def closest_snacks_to_snack(snack_index_in, k = 5):
     sims = docs_compressed.dot(docs_compressed[snack_index_in,:])
     asort = np.argsort(-sims)[:k+1]
     return [(data_lst[i][0],sims[i]/sims[asort[0]]) for i in asort[1:]]
 
 #prints the 10 closest snacks for the first 10 snacks
-for i in range(10):
-    print(data_lst[i][0])
-    for title, score in closest_snacks(i):
-        print("{}:{:.3f}".format(title[:40], score))
-    print()
+# for i in range(10):
+#     print(data_lst[i][0])
+#     for title, score in closest_snacks(i):
+#         print("{}:{:.3f}".format(title[:40], score))
+#     print()
 
