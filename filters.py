@@ -8,6 +8,9 @@ percentagesDict = pickle.load(pickle_in)
 
 
 def filters(percentagesDict, fatLevel = None, carbLevel = None, proteinLevel = None):
+"""This function creates a dictionary based on the levels of each nutrient provided:
+Low, Medium, High, and stores it in a dictionary (not pickled)
+"""
     finalDict = {}
 
     for product in percentagesDict.items():

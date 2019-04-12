@@ -7,6 +7,10 @@ pickle_in = open("Data/FINAL_snacks_data.pickle","rb")
 AllFoodsDict = pickle.load(pickle_in)
 
 def percentages(AllFoodsDict):
+"""This function calculates the percentages in each snack that correspond to
+carbs, fats, and proteins. These values are stored in a dictionary
+(pickled in file: percentagesDict.pickle)
+"""
     AllFoodsDictCopy = dict(AllFoodsDict)
     print(AllFoodsDictCopy["Salba Smart Organic White Corn Tortilla Chips"]['nutrients'])
 
