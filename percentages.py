@@ -14,6 +14,9 @@ def percentages(AllFoodsDict):
     carb = 0.0
     protein = 0.0
     percentages = {}
+    fat_to_cal = 9
+    carb_to_cal = 4
+    protein_to_cal = 4
 
     for product in AllFoodsDictCopy.items():
         calories = 0.0
@@ -30,10 +33,9 @@ def percentages(AllFoodsDict):
             elif t[0] == "protein":
                 protein = t[1]
         if calories != 0.0:
-            fatPercentage = (fat*9)/calories
-            carbPercentage = (carb*4)/calories
-            proteinPercentage = (protein*4)/calories
-            # print(calories, fatPercentage, carbPercentage, proteinPercentage)
+            fatPercentage = (fat * fat_to_cal)/calories
+            carbPercentage = (carb * carb_to_cal)/calories
+            proteinPercentage = (protein * protein_to_cal)/calories
         else:
             fatPercentage = 0.0
             carbPercentage = 0.0
@@ -49,8 +51,6 @@ def percentages(AllFoodsDict):
 percentagesDict = percentages(AllFoodsDict)
 # print(percentagesDict["Salba Smart Organic White Corn Tortilla Chips"])
 # print(percentagesDict)
-# print(len(AllFoodsDict))
-# print(len(percentagesDict))
 
 pickle_out = open("Data/percentagesDict.pickle","wb")
 pickle.dump(percentagesDict, pickle_out)

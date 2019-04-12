@@ -27,19 +27,14 @@ def filters(percentagesDict, fatLevel = None, carbLevel = None, proteinLevel = N
             bool = bool * False
         if (proteinLevel == "Low" and protein > 0.0 and protein < 0.2) or (proteinLevel == "Medium" and protein >= 0.2 and protein < 0.4) or (proteinLevel == "High" and protein >= 0.4) or (proteinLevel == None):
             bool = bool * True
-            # print(bool, protein)
         else:
             bool = bool * False
 
         if bool == True:
             finalDict[product[0]] = product[1]
-        # print(bool, product)
     return finalDict
 
 filteredDict = filters(percentagesDict, fatLevel = None, carbLevel = None, proteinLevel = None) # Only put levels: "Low", "Medium", "High"
-
-# print(filteredDict)
-# print(len(filteredDict))
 
 end_time = time.time()
 time_elapsed = end_time - start_time
