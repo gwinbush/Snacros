@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Snacros</title>
+		<link rel="stylesheet" type="text/css" href="../styles.css">
+	</head>
+	<body>
+			<h1 class="text">Snacros</h1>
+			<h2 class="text"> Snack Recommender</h2>
+
+			<h3 class="text">What levels of nutrients are you looking for in your snack?</h3>
+
+			<div id="selectors">
+				<div id="selectorsFat">
+					<p>Fat:</p>
+					<select id="Fat_Level" onChange="selectFunctionFat(this);">
+					  <option value="None">None</option>
+					  <option value="Low">Low Fat</option>
+					  <option value="Medium">Medium Fat</option>
+					  <option value="High">High Fat</option>
+					</select>
+				</div>
+				<div id="selectorsCarb">
+					<p>Carbs:</p>
+					<select id="Carb_Level" onChange="selectFunctionCarb(this);">
+					  <option value="None">None</option>
+					  <option value="Low">Low Carb</option>
+					  <option value="Medium">Medium Carb</option>
+					  <option value="High">High Carb</option>
+					</select>
+				</div>
+				<div id="selectorsProtein">
+					<p>Protein:</p>
+					<select id="Protein_Level" onChange="selectFunctionProtein(this);">
+					  <option value="None">None</option>
+					  <option value="Low">Low Protein</option>
+					  <option value="Medium">Medium Protein</option>
+					  <option value="High">High Protein</option>
+					</select>
+				</div>
+			</div>
+
+			<div id="testF"></div>
+			<div id="testC"></div>
+			<div id="testP"></div>
+
+
+			<p>The Dictionary with the op 11 elements: {{ filters }}</p>
+
+			{% for d in filters %}
+					<br>
+					<p>{{d}}</p>
+			{% endfor %}
+
+		<script>
+
+			function selectFunctionFat(element) {
+		    document.getElementById("testF").innerHTML = document.getElementById("Fat_Level").value;
+				var fat = document.getElementById("Fat_Level").value
+			}
+
+			function selectFunctionCarb(element) {
+				document.getElementById("testC").innerHTML = document.getElementById("Carb_Level").value;
+				var carb = document.getElementById("Carb_Level").value
+			}
+
+			function selectFunctionProtein(element) {
+				document.getElementById("testP").innerHTML = document.getElementById("Protein_Level").value;
+				var protein = document.getElementById("Protein_Level").value
+			}
+
+// The code below was to just try some stuff out
+				// function pass_values() {
+				//    var pass_to_python = new Number(7)
+        //       $.ajax(
+        //       {
+        //           type:'POST',
+        //           contentType:'application/json;charset-utf-08',
+        //           dataType:'json',
+        //           url:'http://127.0.0.1:5000/pass_val?value='+pass_to_python ,
+        //           success:function (data) {
+        //               var reply=data.reply;
+        //               if (reply=="success")
+        //               {
+        //                   return;
+        //               }
+        //               else
+        //                   {
+        //                   alert("some error ocured in session agent")
+        //                   }
+				//
+        //           }
+        //       }
+        //   );
+				// }
+
+
+		</script>
+
+
+
+		<!-- {{ filters }} -->
+	</body>
+</html>

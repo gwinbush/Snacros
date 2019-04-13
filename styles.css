@@ -1,0 +1,22 @@
+#selectors1{
+  display: inline-inline-block;
+}
+
+#selectors select, #selectors p {
+  display: inline;
+  vertical-align: middle;
+  line-height: 28px;
+}
+
+h3{
+    margin-top: 80px;
+}
+
+.text, #selectors{
+  font-family: Gill Sans, sans-serif;
+  text-align: center;
+}
+
+h1{
+  font-size: 60pt;
+}
