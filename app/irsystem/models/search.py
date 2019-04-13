@@ -1,5 +1,8 @@
 import pickle
 import time
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
 
 def cooccur(snack_data, snack_1, snack_2):
 	if snack_1 in snack_data[snack_2]['also_bought']:
@@ -109,13 +112,41 @@ def top_n_scores(snack_data, percentage_data, n, snack_query, protein_query, car
 
 	return scores_list[0:n]
 
+def find_food(snack_data, query):
+	"""
+	Returns a food title in the database that is most similar to the search query using cosing similarity
+
+	Arguments:
+	snack_data: dictionary containing all the snacks and info
+	query: a snack that a user searches for
+	"""
+
+	start_time = time.time()
+
+	docs =[title for title in snack_data.keys()]
+	docs.insert(0, query)
+	
+	vectorizer=TfidfVectorizer()
+	matrix=vectorizer.fit_transform(docs)
+	cs=cosine_similarity(matrix[0], matrix)
+
+	sorted_row = np.argsort(cs, axis=1)[0][::-1]
+
+	print("find_food() time: --- %s seconds ---" % (time.time() - start_time))
+
+	return docs[sorted_row[1]]
+
+
+
 with open ('../../../Data/FINAL_snacks_data.pickle', 'rb') as f:
 	snack_data = pickle.load(f)
 
 with open ('../../../Data/percentagesDict.pickle', 'rb') as f:
 	percentage_data = pickle.load(f)
 
-scores = top_n_scores(snack_data, percentage_data, 10, 'Peanut Butter Space Food Sticks', 'high', 'low', 'high')
+query = find_food(snack_data, 'protein bar')
+print(query)
+scores = top_n_scores(snack_data, percentage_data, 10, query, 'high', 'high', 'low')
 print(scores)
 
 
