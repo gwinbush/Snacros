@@ -27,6 +27,7 @@ app.config.from_object(os.environ['APP_SETTINGS'])
 
 all_data = open('Data/FINAL_snacks_data.pickle', 'rb')
 all_data = pickle.load(all_data)
+# print(all_data)
 
 pickle_in = open("Data/title_to_index.pickle", "rb")
 title_to_index = pickle.load(pickle_in)
@@ -100,21 +101,25 @@ def filters():
 	w1 = 1
 	w2 = 1
 	w3 = 1
+	# print(all_data)
+	# print('QUERY : ' + query_snack)
 	# FIND SIM SNACK IF QUERY NOT IN DATABASE
-	all_titles = list(title_to_index.keys())
-	all_titles.insert(0, query_snack)
-	vectorizer=TfidfVectorizer()
-	matrix=vectorizer.fit_transform(all_titles)
-	cs=cosine_similarity(matrix[0], matrix)
-	sorted_row = np.argsort(cs, axis=1)[0][::-1]
-	query_snack = all_titles[sorted_row[1]]
-
+	if query_snack not in list(all_data.keys()):
+		all_titles = list(all_data.keys())
+		all_titles.insert(0, query_snack)
+		vectorizer=TfidfVectorizer()
+		matrix=vectorizer.fit_transform(all_titles)
+		cs=cosine_similarity(matrix[0], matrix)
+		sorted_row = np.argsort(cs, axis=1)[0][::-1]
+		query_snack = all_titles[sorted_row[1]]
+	# print('NEW QUERY : ' + query_snack)
 	#SVD
+	# print(filtered_snacks)
 	data_lst = [(request, all_data[request]['description']) for request in filtered_snacks.keys()]
 	data_lst.append((query_snack, all_data[query_snack]['description']))
 	vectorizer = TfidfVectorizer(stop_words = 'english', max_df = .7)
 	my_matrix = vectorizer.fit_transform([x[1] for x in data_lst]).transpose()
-	print('SHAPE :' + str(my_matrix.shape))
+	# print('SHAPE :' + str(my_matrix.shape))
 	u, s, v_trans = svds(my_matrix, k=len(data_lst)-1)
 	words_compressed, _, docs_compressed = svds(my_matrix, k=20)
 	docs_compressed = docs_compressed.transpose()
