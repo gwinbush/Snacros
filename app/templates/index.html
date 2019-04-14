@@ -91,7 +91,28 @@
 				      async: true,
 							success: function(data){
 								console.log(data)
-								document.getElementById('results').innerHTML = data
+								// document.getElementById('results').innerHTML = data
+								// x = data.split(" ");
+								// x = toString(x).split("{");
+								// console.log(x);
+								// document.getElementById('results').innerHTML = x;
+								data=$.parseJSON( data );
+								console.log(data);
+								document.getElementById("results").innerHTML = "";
+								var keys = Object.keys(data);
+								console.log(keys);
+								var text = "";
+								var i;
+								for (i = 0; i < 11; i++) {
+								  fatPercentage = data[keys[i]].fat;
+									carbPercentage = data[keys[i]].carb;
+									proteinPercentage = data[keys[i]].protein;
+									$('#results')
+										.append('<div class="catalog"><b>'+i + ".</b>" + "<b>"+keys[i]+"</b><p><b>Fat Percentage:</b> " + (fatPercentage*100).toFixed(2) + "%</p> <p><b>Carb Percentage:</b> " + (carbPercentage*100).toFixed(2) + "%</p> <p><b>Protein Percentage:</b> " + (proteinPercentage*100).toFixed(2) + "%</p><br>")
+										.addClass('text').css("float","left");
+								};
+
+								// document.getElementById('results').innerHTML = data;
 							},
 							error: function(error){
 								console.log(error);

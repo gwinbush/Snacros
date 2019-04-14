@@ -19,7 +19,6 @@ def filters(percentagesDict, fatLevel = None, carbLevel = None, proteinLevel = N
 
         if (fatLevel == "Low" and fat > 0.0 and fat < 0.3) or (fatLevel == "Medium" and fat >= 0.3 and fat < 0.6) or (fatLevel == "High" and fat >= 0.6) or (fatLevel == None):
             bool = bool * True
-
         else:
             bool = bool * False
         if (carbLevel == "Low" and carb > 0.0 and carb < 0.1) or (carbLevel == "Medium" and carb >= 0.1 and carb < 0.2) or (carbLevel == "High" and carb >= 0.2) or (carbLevel == None):
@@ -30,10 +29,8 @@ def filters(percentagesDict, fatLevel = None, carbLevel = None, proteinLevel = N
             bool = bool * True
         else:
             bool = bool * False
-
         if bool == True:
             finalDict[product[0]] = product[1]
-
     return finalDict
 
 filteredDict = filters(percentagesDict, fatLevel = None, carbLevel = None, proteinLevel = None) # Only put levels: "Low", "Medium", "High"

@@ -2,10 +2,12 @@ html,body{
   height:100%;
   margin:0;
   padding:0;
+  background-color: white;
 }
 
 h1{
   font-size: 60pt;
+  text-align: center;
 }
 
 #title{
@@ -16,40 +18,62 @@ h1{
   background-position: center center;
   text-align:center;
   padding: 50pt;
+  text-align: center;
 }
 
-#selectors1{
+#selectors1, #selectors{
   display: inline-inline-block;
+  text-align: center;
 }
 
 #selectors select, #selectors p, input {
   display: inline;
   vertical-align: middle;
   line-height: 28px;
+  text-align: center;
 }
 
 h1{
   padding-top: 0pt;
+  text-align: center;
 }
 
 h2{
   padding: 0pt;
+  text-align: center;
 }
 
 h3{
     margin-top: 40px;
+    text-align: center;
 }
 
 .text, #selectors, .form-group, .form-inline{
   font-family: Gill Sans, sans-serif;
-  text-align: center;
 }
 
 input{
   width: 10%;
   height: 100%
+  text-align: center;
 }
 
 #results{
   display: none;
 }
+
+/* .catalog {
+    background-color: white;
+    position: relative;
+    display: inline-block;
+    border: black, solid;
+    top: 60px;
+    left: 0;
+    float: left;
+    width: 20%;
+    height: 200%;
+    margin: 10px;
+    padding: 20px;
+    font-size: 10pt;
+    line-height: 5px;
+} */

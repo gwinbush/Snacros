@@ -78,7 +78,7 @@ def filters():
         if bool == True:
             finalDict[product[0]] = product[1]
         filteredDictTop10 = {k: finalDict[k] for k in list(finalDict)[:11]};
-    return str(filteredDictTop10);
+    return json.dumps(filteredDictTop10);
 
 
 end_time = time.time()
