@@ -107,6 +107,7 @@ def filters():
 	# print('QUERY : ' + query_snack)
 	# FIND SIM SNACK IF QUERY NOT IN DATABASE
 	# print('snack sim')
+
 	if query_snack not in list(all_data.keys()):
 		all_titles = list(all_data.keys())
 		all_titles.insert(0, query_snack)
@@ -120,6 +121,10 @@ def filters():
 	# print(filtered_snacks)
 	# print('svd')
 	data_lst = [(request, all_data[request]['description']) for request in filtered_snacks.keys()]
+	print(len(data_lst))
+	if len(data_lst) == 0:
+		print('RETURN')
+		return json.dumps([])
 	data_lst.append((query_snack, all_data[query_snack]['description']))
 	vectorizer = TfidfVectorizer(stop_words = 'english', max_df = .7)
 	my_matrix = vectorizer.fit_transform([x[1] for x in data_lst]).transpose()
@@ -127,7 +132,20 @@ def filters():
 	# print('usv')
 	# u, s, v_trans = svds(my_matrix, k=len(data_lst)-1)
 
-	words_compressed, _, docs_compressed = svds(my_matrix, k=20)
+	if len(data_lst) <= 10:
+		does_cooccur = snack in all_data[query_snack]['also_bought']
+		# rating = all_data[snack]['rating']
+		rating = 0
+		score = w1*does_cooccur + w2*rating
+
+		scores_lst.append((snack, score))
+		scores_lst.sort(key=lambda tup: tup[1], reverse=True)
+		return json.dumps([(snack_name, percentagesDict[snack_name]) for (snack_name, snack_score) in scores_lst])
+
+	if len(data_lst) < 20:
+		words_compressed, _, docs_compressed = svds(my_matrix, k=len(data_lst)-1)
+	else:
+		words_compressed, _, docs_compressed = svds(my_matrix, k=20)
 	# print('after calc')
 	docs_compressed = docs_compressed.transpose()
 	word_to_index = vectorizer.vocabulary_
