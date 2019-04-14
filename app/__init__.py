@@ -25,12 +25,12 @@ socketio = SocketIO()
 app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
 
-all_data = open('Data/FINAL_snacks_data.pickle', 'rb')
-all_data = pickle.load(all_data)
+with open('Data/FINAL_snacks_data.pickle', 'rb') as f:
+	all_data = pickle.load(f)
 # print(all_data)
 
-pickle_in = open("Data/title_to_index.pickle", "rb")
-title_to_index = pickle.load(pickle_in)
+with open("Data/title_to_index.pickle", "rb") as f:
+	title_to_index = pickle.load(f)
 
 
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
@@ -115,7 +115,7 @@ def filters():
 		cs=cosine_similarity(matrix[0], matrix)
 		sorted_row = np.argsort(cs, axis=1)[0][::-1]
 		query_snack = all_titles[sorted_row[1]]
-	# print('NEW QUERY : ' + query_snack)
+	print('NEW QUERY : ' + query_snack)
 	#SVD
 	# print(filtered_snacks)
 	# print('svd')
@@ -144,6 +144,7 @@ def filters():
 	#Return sorted list of sim scores
 	# print('sort')
 	scores_lst = []
+
 	for snack, svd_score in svd_sorted:
 		does_cooccur = snack in all_data[query_snack]['also_bought']
 		# rating = all_data[snack]['rating']
@@ -153,9 +154,10 @@ def filters():
 		scores_lst.append((snack, score))
 		scores_lst.sort(key=lambda tup: tup[1], reverse=True)
 
-	scored_filtered_dict = {snack_name: percentagesDict[snack_name] for (snack_name, snack_score) in scores_lst}
+	scored_filtered_lst = [(snack_name, percentagesDict[snack_name]) for (snack_name, snack_score) in scores_lst]
+	print(scores_lst[0])
 	# print('finish')
-	return json.dumps(scored_filtered_dict);
+	return json.dumps(scored_filtered_lst);
 
 end_time = time.time()
 time_elapsed = end_time - start_time
