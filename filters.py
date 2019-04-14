@@ -1,9 +1,6 @@
 import pickle
 import time
-from flask import Flask, render_template, Response, request, redirect, url_for
 
-
-start_time = time.time()
 
 pickle_in = open("Data/percentagesDict.pickle","rb")
 percentagesDict = pickle.load(pickle_in)
@@ -42,18 +39,3 @@ def filters(percentagesDict, fatLevel = None, carbLevel = None, proteinLevel = N
 filteredDict = filters(percentagesDict, fatLevel = None, carbLevel = None, proteinLevel = None) # Only put levels: "Low", "Medium", "High"
 filteredDictTop10 = {k: filteredDict[k] for k in list(filteredDict)[:11]}
 
-
-app = Flask(__name__)
-
-@app.route("/")
-def index():
-    return render_template('index.html', filters=filteredDictTop10)
-
-
-if __name__ == '__main__':
-  app.run(debug=True)
-
-
-end_time = time.time()
-time_elapsed = end_time - start_time
-print("Time Elapsed:", time_elapsed, "seconds")
