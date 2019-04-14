@@ -34,6 +34,8 @@ all_asin = asin_to_titles.keys()
 new_titles_dict = {}
 for old_title, data in old_titles_data.items():
 	new_title = old_to_new_title[old_title]
+	if new_title == '':
+		print(old_title)
 
 	also_bought = fixed_filtered_snacks[new_title]['also_bought']
 	# print(also_bought)

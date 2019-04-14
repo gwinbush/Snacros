@@ -84,6 +84,7 @@
 		        fat = response.fat;
 		        carb = response.carb;
 		        protein = response.protein;
+		        similarSnacks = response.similarSnacks;
 						$.ajax({
 							url: '/filters',
 							data: $('form').serialize(),
@@ -96,6 +97,7 @@
 								// x = toString(x).split("{");
 								// console.log(x);
 								// document.getElementById('results').innerHTML = x;
+								
 								data=$.parseJSON( data );
 								console.log(data);
 								document.getElementById("results").innerHTML = "";
@@ -103,7 +105,7 @@
 								console.log(keys);
 								var text = "";
 								var i;
-								for (i = 0; i < keys.length; i++) {
+								for (i = 0; i < 10; i++) {
 								  fatPercentage = data[keys[i]].fat;
 									carbPercentage = data[keys[i]].carb;
 									proteinPercentage = data[keys[i]].protein;
