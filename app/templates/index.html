@@ -91,22 +91,17 @@
 							type: 'POST',
 				      async: true,
 							success: function(data){
-								console.log(data)
 								// document.getElementById('results').innerHTML = data
 								// x = data.split(" ");
 								// x = toString(x).split("{");
 								// console.log(x);
 								// document.getElementById('results').innerHTML = x;
-								
+
 								data=$.parseJSON( data );
 								console.log(data);
 								document.getElementById("results").innerHTML = "";
-								var keys = Object.keys(data);
-								console.log(keys);
-								var text = "";
 								var i;
 								for (i = 0; i < 10; i++) {
-									console.log(data)
 
 								  fatPercentage = data[i][1]['fat'];
 									carbPercentage = data[i][1].carb;
