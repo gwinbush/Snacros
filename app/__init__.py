@@ -76,6 +76,7 @@ def filters():
 
 	filtered_snacks = {}
 	# print(percentagesDict)
+	# print('before filter')
 	for product in percentagesDict.items():
 		fat = product[1]["fat"]
 		carb = product[1]["carb"]
@@ -97,6 +98,7 @@ def filters():
 		if bool == True:
 			filtered_snacks[product[0]] = product[1]
 		# filteredDictTop10 = {k: finalDict[k] for k in list(finalDict)[:11]};
+	# print('after filter')
 	#START RANKING STUFF
 	w1 = 1
 	w2 = 1
@@ -104,6 +106,7 @@ def filters():
 	# print(all_data)
 	# print('QUERY : ' + query_snack)
 	# FIND SIM SNACK IF QUERY NOT IN DATABASE
+	# print('snack sim')
 	if query_snack not in list(all_data.keys()):
 		all_titles = list(all_data.keys())
 		all_titles.insert(0, query_snack)
@@ -115,13 +118,17 @@ def filters():
 	# print('NEW QUERY : ' + query_snack)
 	#SVD
 	# print(filtered_snacks)
+	# print('svd')
 	data_lst = [(request, all_data[request]['description']) for request in filtered_snacks.keys()]
 	data_lst.append((query_snack, all_data[query_snack]['description']))
 	vectorizer = TfidfVectorizer(stop_words = 'english', max_df = .7)
 	my_matrix = vectorizer.fit_transform([x[1] for x in data_lst]).transpose()
 	# print('SHAPE :' + str(my_matrix.shape))
-	u, s, v_trans = svds(my_matrix, k=len(data_lst)-1)
+	# print('usv')
+	# u, s, v_trans = svds(my_matrix, k=len(data_lst)-1)
+
 	words_compressed, _, docs_compressed = svds(my_matrix, k=20)
+	# print('after calc')
 	docs_compressed = docs_compressed.transpose()
 	word_to_index = vectorizer.vocabulary_
 	words_compressed = normalize(words_compressed, axis = 1)
@@ -131,9 +138,11 @@ def filters():
 
 	sims = docs_compressed.dot(docs_compressed[snack_index_in,:])
 	asort = np.argsort(-sims)
+	# print('svd sort')
 	svd_sorted = [(data_lst[i][0],sims[i]/sims[asort[0]]) for i in asort[1:]]
 
 	#Return sorted list of sim scores
+	# print('sort')
 	scores_lst = []
 	for snack, svd_score in svd_sorted:
 		does_cooccur = snack in all_data[query_snack]['also_bought']
@@ -145,7 +154,7 @@ def filters():
 		scores_lst.sort(key=lambda tup: tup[1], reverse=True)
 
 	scored_filtered_dict = {snack_name: percentagesDict[snack_name] for (snack_name, snack_score) in scores_lst}
-
+	# print('finish')
 	return json.dumps(scored_filtered_dict);
 
 end_time = time.time()
