@@ -3,96 +3,114 @@
 	<head>
 		<title>Snacros</title>
 		<link rel="stylesheet" type="text/css" href="/static/styles.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	</head>
 	<body>
-			<h1 class="text">Snacros</h1>
-			<h2 class="text"> Snack Recommender</h2>
-
+			<div id="title">
+				<h1 class="text">Snacros</h1>
+				<!-- <h2 class="text"> Snack Recommender</h2> -->
+			</div>
 			<h3 class="text">What levels of nutrients are you looking for in your snack?</h3>
 
-			<div id="selectors">
-				<div id="selectorsFat">
-					<p>Fat:</p>
-					<select id="Fat_Level" onChange="selectFunctionFat(this);">
-					  <option value="None">None</option>
-					  <option value="Low">Low Fat</option>
-					  <option value="Medium">Medium Fat</option>
-					  <option value="High">High Fat</option>
-					</select>
+			<form class="formInputs" role="form">
+				<div id="selectors">
+					<div id="selectorsFat">
+						<p>Fat:</p>
+						<select id="Fat_Level" name="fatContent">
+						  <option value="None" selected>None</option>
+						  <option value="Low">Low Fat</option>
+						  <option value="Medium">Medium Fat</option>
+						  <option value="High">High Fat</option>
+						</select>
+					</div>
+					<div id="selectorsCarb">
+						<p>Carbs:</p>
+						<select id="Carb_Level" name="carbContent">
+						  <option value="None" selected>None</option>
+						  <option value="Low">Low Carb</option>
+						  <option value="Medium">Medium Carb</option>
+						  <option value="High">High Carb</option>
+						</select>
+					</div>
+					<div id="selectorsProtein">
+						<p>Protein:</p>
+						<select id="Protein_Level" name="proteinContent">
+						  <option value="None" selected>None</option>
+						  <option value="Low">Low Protein</option>
+						  <option value="Medium">Medium Protein</option>
+						  <option value="High">High Protein</option>
+						</select>
+					</div>
+					<div id="similarSnacks">
+						<input placeholder="Similar Snacks that you like" name="similarSnacks" id="similarSnacks"></input>
+					</div>
+					<div id="submit">
+						<button type="button" class="button" onclick="show()">Click Me</button>
+					</div>
 				</div>
-				<div id="selectorsCarb">
-					<p>Carbs:</p>
-					<select id="Carb_Level" onChange="selectFunctionCarb(this);">
-					  <option value="None">None</option>
-					  <option value="Low">Low Carb</option>
-					  <option value="Medium">Medium Carb</option>
-					  <option value="High">High Carb</option>
-					</select>
-				</div>
-				<div id="selectorsProtein">
-					<p>Protein:</p>
-					<select id="Protein_Level" onChange="selectFunctionProtein(this);">
-					  <option value="None">None</option>
-					  <option value="Low">Low Protein</option>
-					  <option value="Medium">Medium Protein</option>
-					  <option value="High">High Protein</option>
-					</select>
-				</div>
-			</div>
+			</form>
 
 			<div id="testF"></div>
 			<div id="testC"></div>
 			<div id="testP"></div>
+			<div id="results" >
+			<!-- <p>The Dictionary with the top 11 elements: {{ filters }}</p>
 
-
-			<p>The Dictionary with the op 11 elements: {{ filters }}</p>
-
-			{% for d in filters %}
-					<br>
-					<p>{{d}}</p>
-			{% endfor %}
+				{% for d in filters %}
+						<br>
+						<p>{{d}}</p>
+				{% endfor %}
+			</div> -->
 
 		<script>
+			var fat;
+			var carb;
+			var protein;
 
-			function selectFunctionFat(element) {
-		    document.getElementById("testF").innerHTML = document.getElementById("Fat_Level").value;
-				var fat = document.getElementById("Fat_Level").value
+			function show() {
+				var fat = $('#Fat_Level').val();
+				var carb = $('#Carb_Level').val();
+		    var protein = $('#Protein_Level').val();
+		    var similarSnacks = $('#similarSnacks').val();
+				// AJAX call to retrieve the nutrient levels and similar snacks values
+				$.ajax({
+					url: '/filterLevels',
+					data: $('form').serialize(),
+					type: 'POST',
+		      async: true,
+					success: function(response){
+						console.log(response);
+		        response=$.parseJSON( response );
+		        fat = response.fat;
+		        carb = response.carb;
+		        protein = response.protein;
+						$.ajax({
+							url: '/filters',
+							data: $('form').serialize(),
+							type: 'POST',
+				      async: true,
+							success: function(data){
+								console.log(data)
+								document.getElementById('results').innerHTML = data
+							},
+							error: function(error){
+								console.log(error);
+							}
+					});
+					},
+					error: function(error){
+						console.log(error);
+					}
+				});
+
+				div = document.getElementById('results');
+    		div.style.display = "block";
+				console.log(fat);
+				console.log(carb);
+				console.log(protein);
 			}
 
-			function selectFunctionCarb(element) {
-				document.getElementById("testC").innerHTML = document.getElementById("Carb_Level").value;
-				var carb = document.getElementById("Carb_Level").value
-			}
 
-			function selectFunctionProtein(element) {
-				document.getElementById("testP").innerHTML = document.getElementById("Protein_Level").value;
-				var protein = document.getElementById("Protein_Level").value
-			}
-
-// The code below was to just try some stuff out
-				// function pass_values() {
-				//    var pass_to_python = new Number(7)
-        //       $.ajax(
-        //       {
-        //           type:'POST',
-        //           contentType:'application/json;charset-utf-08',
-        //           dataType:'json',
-        //           url:'http://127.0.0.1:5000/pass_val?value='+pass_to_python ,
-        //           success:function (data) {
-        //               var reply=data.reply;
-        //               if (reply=="success")
-        //               {
-        //                   return;
-        //               }
-        //               else
-        //                   {
-        //                   alert("some error ocured in session agent")
-        //                   }
-				//
-        //           }
-        //       }
-        //   );
-				// }
 
 
 		</script>

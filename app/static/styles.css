@@ -1,22 +1,55 @@
+html,body{
+  height:100%;
+  margin:0;
+  padding:0;
+}
+
+h1{
+  font-size: 60pt;
+}
+
+#title{
+  width: 92%;
+  height:20%;
+  background-image: url('background1.jpg');
+  background-size: 70%;
+  background-position: center center;
+  text-align:center;
+  padding: 50pt;
+}
+
 #selectors1{
   display: inline-inline-block;
 }
 
-#selectors select, #selectors p {
+#selectors select, #selectors p, input {
   display: inline;
   vertical-align: middle;
   line-height: 28px;
 }
 
-h3{
-    margin-top: 80px;
+h1{
+  padding-top: 0pt;
 }
 
-.text, #selectors{
+h2{
+  padding: 0pt;
+}
+
+h3{
+    margin-top: 40px;
+}
+
+.text, #selectors, .form-group, .form-inline{
   font-family: Gill Sans, sans-serif;
   text-align: center;
 }
 
-h1{
-  font-size: 60pt;
+input{
+  width: 10%;
+  height: 100%
+}
+
+#results{
+  display: none;
 }

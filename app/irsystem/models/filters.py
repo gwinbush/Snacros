@@ -38,4 +38,3 @@ def filters(percentagesDict, fatLevel = None, carbLevel = None, proteinLevel = N
 
 filteredDict = filters(percentagesDict, fatLevel = None, carbLevel = None, proteinLevel = None) # Only put levels: "Low", "Medium", "High"
 filteredDictTop10 = {k: filteredDict[k] for k in list(filteredDict)[:11]}
-
