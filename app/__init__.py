@@ -25,6 +25,11 @@ socketio = SocketIO()
 app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
 
+net_id1 = "Judy Chen (jc2528)"
+net_id2 = "Meghan Chen (mc2254)"
+net_id3 = "Paula Moya Nieto (pm445)"
+net_id4 = "Gabriel Winbush (gw262)"
+
 with open('Data/FINAL_snacks_data.pickle', 'rb') as f:
 	all_data = pickle.load(f)
 # print(all_data)
@@ -56,7 +61,7 @@ def not_found(error):
 
 @app.route("/")
 def index():
-	return render_template('index.html')
+	return render_template('index.html', net_id1=net_id1, net_id2=net_id2, net_id3=net_id3, net_id4=net_id4)
 
 @app.route('/filterLevels', methods=['POST'])
 def filterLevels():

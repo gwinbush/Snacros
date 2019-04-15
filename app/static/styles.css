@@ -71,6 +71,16 @@ h1{
   text-align: center;
 }
 
+#netids{
+  text-align: right;
+  color: black;
+  position: fixed;
+  bottom: 5px;
+  right: 5px;
+  line-height: 5px;
+  font-size: 11pt;
+}
+
 #selectors1, #selectors{
   display: inline-inline-block;
   text-align: center;
