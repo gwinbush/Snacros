@@ -10,147 +10,154 @@
 				<h1 class="text">Snacros</h1>
 				<!-- <h2 class="text"> Snack Recommender</h2> -->
 			</div>
-			<h3 class="text">What levels of nutrients are you looking for in your snack?</h3>
+			<div id="notTitle">
+			<div id="netids" class="text">
+				{{ net_id1 }},
+				{{ net_id2 }},
+				{{ net_id3 }},
+				{{ net_id4 }}
+			</div>
+				<h3 class="text">What levels of nutrients are you looking for in your snack?</h3>
 
-			<form class="formInputs" role="form">
-				<div id="selectors">
-					<div id="selectorsFat">
-						<p>Fat:</p>
-						<select id="Fat_Level" name="fatContent">
-						  <option value="None" selected>None</option>
-						  <option value="Low">Low Fat</option>
-						  <option value="Medium">Medium Fat</option>
-						  <option value="High">High Fat</option>
-						</select>
+				<form class="formInputs" role="form">
+					<div id="selectors">
+						<div id="selectorsFat">
+							<p>Fat:</p>
+							<select id="Fat_Level" name="fatContent">
+							  <option value="None" selected>None</option>
+							  <option value="Low">Low Fat</option>
+							  <option value="Medium">Medium Fat</option>
+							  <option value="High">High Fat</option>
+							</select>
+						</div>
+						<div id="selectorsCarb">
+							<p>Carbs:</p>
+							<select id="Carb_Level" name="carbContent">
+							  <option value="None" selected>None</option>
+							  <option value="Low">Low Carb</option>
+							  <option value="Medium">Medium Carb</option>
+							  <option value="High">High Carb</option>
+							</select>
+						</div>
+						<div id="selectorsProtein">
+							<p>Protein:</p>
+							<select id="Protein_Level" name="proteinContent">
+							  <option value="None" selected>None</option>
+							  <option value="Low">Low Protein</option>
+							  <option value="Medium">Medium Protein</option>
+							  <option value="High">High Protein</option>
+							</select>
+						</div>
+						<div id="similarSnacks">
+							<input placeholder="Similar Snacks that you like" name="similarSnacks" id="similarSnacks"></input>
+						</div>
+						<div id="submit">
+							<button type="button" class="button" onclick="show()">Click Me</button>
+						</div>
 					</div>
-					<div id="selectorsCarb">
-						<p>Carbs:</p>
-						<select id="Carb_Level" name="carbContent">
-						  <option value="None" selected>None</option>
-						  <option value="Low">Low Carb</option>
-						  <option value="Medium">Medium Carb</option>
-						  <option value="High">High Carb</option>
-						</select>
-					</div>
-					<div id="selectorsProtein">
-						<p>Protein:</p>
-						<select id="Protein_Level" name="proteinContent">
-						  <option value="None" selected>None</option>
-						  <option value="Low">Low Protein</option>
-						  <option value="Medium">Medium Protein</option>
-						  <option value="High">High Protein</option>
-						</select>
-					</div>
-					<div id="similarSnacks">
-						<input placeholder="Similar Snacks that you like" name="similarSnacks" id="similarSnacks"></input>
-					</div>
-					<div id="submit">
-						<button type="button" class="button" onclick="show()">Click Me</button>
-					</div>
-				</div>
-			</form>
+				</form>
 
-			<div id="testF"></div>
-			<div id="testC"></div>
-			<div id="testP"></div>
-			<div id="results" >
-			<!-- <p>The Dictionary with the top 11 elements: {{ filters }}</p>
+				<div id="testF"></div>
+				<div id="testC"></div>
+				<div id="testP"></div>
+				<div id="results" >
+				<!-- <p>The Dictionary with the top 11 elements: {{ filters }}</p>
 
-				{% for d in filters %}
-						<br>
-						<p>{{d}}</p>
-				{% endfor %}
-			</div> -->
+					{% for d in filters %}
+							<br>
+							<p>{{d}}</p>
+					{% endfor %}
+				</div> -->
 
-		<script>
-			var fat;
-			var carb;
-			var protein;
+			<script>
+				var fat;
+				var carb;
+				var protein;
 
-			function show() {
-				var fat = $('#Fat_Level').val();
-				var carb = $('#Carb_Level').val();
-		    var protein = $('#Protein_Level').val();
-		    var similarSnacks = $('#similarSnacks').val();
-				// AJAX call to retrieve the nutrient levels and similar snacks values
-				$.ajax({
-					url: '/filterLevels',
-					data: $('form').serialize(),
-					type: 'POST',
-		      async: true,
-					success: function(response){
-						console.log(response);
-		        response=$.parseJSON( response );
-		        fat = response.fat;
-		        carb = response.carb;
-		        protein = response.protein;
-		        similarSnacks = response.similarSnacks;
-						$.ajax({
-							url: '/filters',
-							data: $('form').serialize(),
-							type: 'POST',
-				      async: true,
-							success: function(data){
-								// document.getElementById('results').innerHTML = data
-								// x = data.split(" ");
-								// x = toString(x).split("{");
-								// console.log(x);
-								// document.getElementById('results').innerHTML = x;
+				function show() {
+					var fat = $('#Fat_Level').val();
+					var carb = $('#Carb_Level').val();
+			    var protein = $('#Protein_Level').val();
+			    var similarSnacks = $('#similarSnacks').val();
+					// AJAX call to retrieve the nutrient levels and similar snacks values
+					$.ajax({
+						url: '/filterLevels',
+						data: $('form').serialize(),
+						type: 'POST',
+			      async: true,
+						success: function(response){
+							console.log(response);
+			        response=$.parseJSON( response );
+			        fat = response.fat;
+			        carb = response.carb;
+			        protein = response.protein;
+			        similarSnacks = response.similarSnacks;
+							$.ajax({
+								url: '/filters',
+								data: $('form').serialize(),
+								type: 'POST',
+					      async: true,
+								success: function(data){
+									// document.getElementById('results').innerHTML = data
+									// x = data.split(" ");
+									// x = toString(x).split("{");
+									// console.log(x);
+									// document.getElementById('results').innerHTML = x;
 
-								data=$.parseJSON( data );
-								console.log(data);
-								document.getElementById("results").innerHTML = "";
-								var i;
-								if (data.length == 0){
-									$('#results').append('<p> No Results Found </p>');
+									data=$.parseJSON( data );
+									console.log(data);
+									document.getElementById("results").innerHTML = "";
+									var i;
+									if (data.length == 0){
+										$('#results').append('<p> No Results Found </p>');
 
-								}
-								else {
+									}
+									else {
 
-									for (i = 0; i < 10; i++) {
+										for (i = 0; i < 10; i++) {
 
-										fatPercentage = data[i][1].fat;
-										carbPercentage = data[i][1].carb;
-										proteinPercentage = data[i][1].protein;
-										url = data[i][2]
-										$('#results')
-											.append('<div class="catalog"><b>'+(i+1) + ". </b>" + "<b>"+data[i][0] +
-											"</b><p><b>Fat Percentage:</b> " + (fatPercentage*100).toFixed(2) +
-											"%</p> <p><b>Carb Percentage:</b> " + (carbPercentage*100).toFixed(2) +
-											"%</p> <p><b>Protein Percentage:</b> " + (proteinPercentage*100).toFixed(2) +
-											"%</p><a href=\"" + url + "\">" + 
-											"<img border=\"0\" src=\"../static/buy_on_amazon.jpg\" width=\"200\">"
-											+ "</a><br><br>")
-											.addClass('text').css("float","left");
+											fatPercentage = data[i][1].fat;
+											carbPercentage = data[i][1].carb;
+											proteinPercentage = data[i][1].protein;
+											url = data[i][2]
+											$('#results')
+												.append('<div class="catalog"><b>'+(i+1) + ". </b>" + "<b>"+data[i][0] +
+												"</b><p><b>Fat Percentage:</b> " + (fatPercentage*100).toFixed(2) +
+												"%</p> <p><b>Carb Percentage:</b> " + (carbPercentage*100).toFixed(2) +
+												"%</p> <p><b>Protein Percentage:</b> " + (proteinPercentage*100).toFixed(2) +
+												"%</p><a href=\"" + url + "\">" +
+												"<img border=\"0\" src=\"../static/buy_on_amazon.jpg\" width=\"200\">"
+												+ "</a><br><br>")
+												.addClass('text').css("float","left");
+										};
 									};
-								};
 
-								// document.getElementById('results').innerHTML = data;
-							},
-							error: function(error){
-								console.log(error);
-							}
+									// document.getElementById('results').innerHTML = data;
+								},
+								error: function(error){
+									console.log(error);
+								}
+						});
+						},
+						error: function(error){
+							console.log(error);
+						}
 					});
-					},
-					error: function(error){
-						console.log(error);
-					}
-				});
 
-				div = document.getElementById('results');
-    		div.style.display = "block";
-				console.log(fat);
-				console.log(carb);
-				console.log(protein);
-			}
+					div = document.getElementById('results');
+	    		div.style.display = "block";
+					console.log(fat);
+					console.log(carb);
+					console.log(protein);
+				}
 
 
 
 
-		</script>
+			</script>
 
 
-
+		</div>
 		<!-- {{ filters }} -->
 	</body>
 </html>
