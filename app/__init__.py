@@ -156,14 +156,19 @@ def filters():
 	# u, s, v_trans = svds(my_matrix, k=len(data_lst)-1)
 
 	if len(data_lst) <= 10:
-		does_cooccur = snack in all_data[query_snack]['also_bought']
-		# rating = all_data[snack]['rating']
-		rating = 0
-		score = w1*does_cooccur + w2*rating
+		scores_lst = []
+		for snack in filtered_snacks.keys():
+			does_cooccur = snack in all_data[query_snack]['also_bought']
+			rating = all_data[snack]['rating']
+			# rating = 0
+			score = w1*does_cooccur + w2*rating
 
-		scores_lst.append((snack, score))
-		scores_lst.sort(key=lambda tup: tup[1], reverse=True)
-		return json.dumps([(snack_name, percentagesDict[snack_name]) for (snack_name, snack_score) in scores_lst])
+			scores_lst.append((snack, score))
+			scores_lst.sort(key=lambda tup: tup[1], reverse=True)
+			base_url = 'https://amazon.com/dp/'
+			scored_filtered_lst = [(snack, percentagesDict[snack], base_url + titles_to_asin[snack]) for (snack, score) in scores_lst]
+
+			return json.dumps(scored_filtered_lst)
 
 	if len(data_lst) < 20:
 		words_compressed, _, docs_compressed = svds(my_matrix, k=len(data_lst)-1)
