@@ -23,19 +23,21 @@
 			<h3 class="text">What levels of nutrients are you looking for in your snack?</h3>
 			<form class="formInputs" role="form"></form>
 				<div id="sliders">
-					<div class="slidecontainer">
+					<div class="slidecontainer" width="100%">
 						<p>Carbs:</p>
 						<input type="range" min="1" max="100" value="50" class="slider" id="carbRange">
 					</div>
+					Don't care about carbs?<input type="checkbox" id="carbInclude" onClick="carbAllow()">
 					<div class="slidecontainer">
 						<p>Fats:</p>
 						<input type="range" min="1" max="100" value="50" class="slider" id="fatRange">
 					</div>
+					Don't care about fats?<input type="checkbox" id="fatInclude" onClick="fatAllow()">
 					<div class="slidecontainer">
 						<p>Proteins:</p>
 						<input type="range" min="1" max="100" value="50" class="slider" id="proteinRange">
 					</div>
-
+					Don't care about proteins?<input type="checkbox" id="proteinInclude" onClick="proteinAllow()">
 					<div id="similarSnacksInput">
 						<input placeholder="Snacks that you like" name="similarSnacks" id="similarSnacks" type="text"></input>
 					</div>
@@ -99,10 +101,50 @@
 				var proteinSlider = document.getElementById("proteinRange");
 				var similarSnacksInput = document.getElementById("similarSnacks");
 
+				function carbAllow() {
+					var carbCheck = document.getElementById("carbInclude");
+
+					if (carbCheck.checked == true) {
+						carbSlider.style.opacity = "0.3";
+						carbSlider.disabled = true;
+					} else {
+						carbSlider.style.opacity = "0.7";
+						carbSlider.style.content.opacity = "1.0";
+						carbSlider.disabled = false;
+					}
+				}
+
+				function fatAllow() {
+					var fatCheck = document.getElementById("fatInclude");
+
+					if (fatCheck.checked == true) {
+						fatSlider.style.opacity = "0.3";
+						fatSlider.disabled = true;
+					} else {
+						fatSlider.style.opacity = "0.7";
+						fatSlider.style.hover.opacity = "1.0";
+						fatSlider.disabled = false;
+					}
+				}
+
+				function proteinAllow() {
+					var proteinCheck = document.getElementById("proteinInclude");
+
+					if (proteinCheck.checked == true) {
+						proteinSlider.style.opacity = "0.3";
+						proteinSlider.disabled = true;
+					} else {
+						proteinSlider.style.opacity = "0.7";
+						proteinSlider.style.content.opacity = "1.0";
+						proteinSlider.disabled = false;
+					}
+				}
+
+				
 				function show() {
-					var fat = fatSlider.value > 67 ? "High" : fatSlider.value > 33 ? "Medium" : "Low";
-					var carb = carbSlider.value > 67 ? "High" : carbSlider.value > 33 ? "Medium" : "Low";
-			    	var protein = proteinSlider.value > 67 ? "High" : proteinSlider.value > 33 ? "Medium" : "Low";
+					var fat = fatSlider.disabled ? "None" : fatSlider.value > 67 ? "High" : fatSlider.value > 33 ? "Medium" : "Low";
+					var carb = carbSlider.disabled ? "None" : carbSlider.value > 67 ? "High" : carbSlider.value > 33 ? "Medium" : "Low";
+			    	var protein = proteinSlider.disabled ? "None" : proteinSlider.value > 67 ? "High" : proteinSlider.value > 33 ? "Medium" : "Low";
 			    	var similarSnacks = similarSnacksInput.value;
 
 					var obj = {
