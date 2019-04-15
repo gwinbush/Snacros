@@ -16,7 +16,7 @@ html,body{
   -webkit-appearance: none;
   width: 50%;
   height: 15px;
-  border-radius: 10px;   
+  border-radius: 10px;
   background: #d3d3d3;
   background-position: center;
   outline: none;
@@ -38,7 +38,7 @@ html,body{
   appearance: none;
   width: 25px;
   height: 25px;
-  border-radius: 50%; 
+  border-radius: 50%;
   background: #4CAF50;
   cursor: pointer;
 }
@@ -113,6 +113,17 @@ input{
 #results{
   display: none;
 }
+
+#netids{
+  text-align: right;
+  color: black;
+  position: fixed;
+  bottom: 5px;
+  right: 5px;
+  line-height: 5px;
+  font-size: 11pt;
+}
+
 
 /* .catalog {
     background-color: white;
