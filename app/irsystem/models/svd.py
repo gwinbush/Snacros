@@ -8,6 +8,10 @@ from scipy.sparse.linalg import svds
 with open ('Data/FINAL_snacks_data.pickle', 'rb') as f:
 	all_data = pickle.load(f)
 
+
+for title, _ in all_data.items():
+	if 'bar' in title:
+		print(title)
 #there are 6466 snacks
 data_lst = [(x, all_data[x]['description']) for x in all_data.keys()]
 
@@ -29,7 +33,7 @@ words_compressed, _, docs_compressed = svds(my_matrix, k=20)
 docs_compressed = docs_compressed.transpose()
 
 word_to_index = vectorizer.vocabulary_
-index_to_word = {i:t for t,i in word_to_index.iteritems()}
+index_to_word = {i:t for t,i in word_to_index.items()}
 
 words_compressed = normalize(words_compressed, axis = 1)
 

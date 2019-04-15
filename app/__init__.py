@@ -35,6 +35,7 @@ with open("Data/title_to_index.pickle", "rb") as f:
 with open("Data/titles_to_asin.pickle", "rb") as f:
 	titles_to_asin = pickle.load(f)
 
+all_data.pop('')
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 # DB
@@ -71,6 +72,7 @@ def filterLevels():
 def filters():
 	pickle_in = open("Data/percentagesDict.pickle","rb");
 	percentagesDict = pickle.load(pickle_in);
+	percentagesDict.pop('')
 	fatLevel = request.form.get('fat');
 	carbLevel = request.form.get('carb');
 	proteinLevel = request.form.get('protein');
@@ -102,9 +104,9 @@ def filters():
 		# filteredDictTop10 = {k: finalDict[k] for k in list(finalDict)[:11]};
 	# print('after filter')
 	#START RANKING STUFF
-	w1 = 1
-	w2 = 1
-	w3 = 1
+	w1 = 0.2
+	w2 = 0.3
+	w3 = 0.5
 	# print(all_data)
 	# print('QUERY : ' + query_snack)
 	# FIND SIM SNACK IF QUERY NOT IN DATABASE
@@ -123,9 +125,9 @@ def filters():
 	# print(filtered_snacks)
 	# print('svd')
 	data_lst = [(request, all_data[request]['description']) for request in filtered_snacks.keys()]
-	print(len(data_lst))
+	# print(len(data_lst))
 	if len(data_lst) == 0:
-		print('RETURN')
+		# print('RETURN')
 		return json.dumps([])
 	data_lst.append((query_snack, all_data[query_snack]['description']))
 	vectorizer = TfidfVectorizer(stop_words = 'english', max_df = .7)
@@ -167,8 +169,8 @@ def filters():
 
 	for snack, svd_score in svd_sorted:
 		does_cooccur = snack in all_data[query_snack]['also_bought']
-		# rating = all_data[snack]['rating']
-		rating = 0
+		rating = all_data[snack]['rating']
+		# rating = 0
 		score = w1*does_cooccur + w2*rating + w3*svd_score
 
 		scores_lst.append((snack, score))
@@ -176,7 +178,7 @@ def filters():
 
 	base_url = 'https://amazon.com/dp/'
 	scored_filtered_lst = [(snack_name, percentagesDict[snack_name], base_url + titles_to_asin[snack_name]) for (snack_name, snack_score) in scores_lst]
-	print(scored_filtered_lst)
+	# print(scored_filtered_lst)
 	# print('finish')
 	return json.dumps(scored_filtered_lst)
 
