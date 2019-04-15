@@ -60,10 +60,10 @@ def index():
 
 @app.route('/filterLevels', methods=['POST'])
 def filterLevels():
-	fat =  request.form['fatContent'];
-	carb = request.form['carbContent'];
-	protein =  request.form['proteinContent'];
-	similarSnacks = request.form['similarSnacks'];
+	fat =  request.form.get('fat');
+	carb = request.form.get('carb');
+	protein = request.form.get('protein');
+	similarSnacks = request.form.get('similarSnacks');
 	dumps = json.dumps({'status':'OK','fat':fat,'carb':carb,'protein':protein, 'similarSnacks':similarSnacks});
 	return dumps;
 
@@ -71,10 +71,10 @@ def filterLevels():
 def filters():
 	pickle_in = open("Data/percentagesDict.pickle","rb");
 	percentagesDict = pickle.load(pickle_in);
-	fatLevel =  request.form['fatContent'];
-	carbLevel = request.form['carbContent'];
-	proteinLevel =  request.form['proteinContent'];
-	query_snack = request.form['similarSnacks'];
+	fatLevel = request.form.get('fat');
+	carbLevel = request.form.get('carb');
+	proteinLevel = request.form.get('protein');
+	query_snack = request.form.get('similarSnacks');
 
 	filtered_snacks = {}
 	# print(percentagesDict)

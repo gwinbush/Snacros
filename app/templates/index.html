@@ -2,94 +2,126 @@
 <html>
 	<head>
 		<title>Snacros</title>
+		<!-- <link rel="stylesheet" href="/static/bootstrap.css"> -->
+		<!-- <link rel="stylesheet" href="/static/bootstrap.min.css"> -->
 		<link rel="stylesheet" type="text/css" href="/static/styles.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	</head>
 	<body>
-			<div id="title">
-				<h1 class="text">Snacros</h1>
-				<!-- <h2 class="text"> Snack Recommender</h2> -->
-			</div>
-			<h3 class="text">What levels of nutrients are you looking for in your snack?</h3>
-
-			<form class="formInputs" role="form">
-				<div id="selectors">
-					<div id="selectorsFat">
-						<p>Fat:</p>
-						<select id="Fat_Level" name="fatContent">
-						  <option value="None" selected>None</option>
-						  <option value="Low">Low Fat</option>
-						  <option value="Medium">Medium Fat</option>
-						  <option value="High">High Fat</option>
-						</select>
-					</div>
-					<div id="selectorsCarb">
-						<p>Carbs:</p>
-						<select id="Carb_Level" name="carbContent">
-						  <option value="None" selected>None</option>
-						  <option value="Low">Low Carb</option>
-						  <option value="Medium">Medium Carb</option>
-						  <option value="High">High Carb</option>
-						</select>
-					</div>
-					<div id="selectorsProtein">
-						<p>Protein:</p>
-						<select id="Protein_Level" name="proteinContent">
-						  <option value="None" selected>None</option>
-						  <option value="Low">Low Protein</option>
-						  <option value="Medium">Medium Protein</option>
-						  <option value="High">High Protein</option>
-						</select>
-					</div>
-					<div id="similarSnacks">
-						<input placeholder="Similar Snacks that you like" name="similarSnacks" id="similarSnacks"></input>
-					</div>
-					<div id="submit">
-						<button type="button" class="button" onclick="show()">Click Me</button>
-					</div>
+		<div id="title">
+			<h1 class="text">Snacros</h1>
+			<!-- <h2 class="text"> Snack Recommender</h2> -->
+		</div>
+		<h3 class="text">What levels of nutrients are you looking for in your snack?</h3>
+		<form class="formInputs" role="form"></form>
+			<div id="sliders">
+				<div class="slidecontainer">
+					<p>Carbs:</p>
+					<input type="range" min="1" max="100" value="50" class="slider" id="carbRange">
 				</div>
-			</form>
+				<div class="slidecontainer">
+					<p>Fats:</p>
+					<input type="range" min="1" max="100" value="50" class="slider" id="fatRange">
+				</div>
+				<div class="slidecontainer">
+					<p>Proteins:</p>
+					<input type="range" min="1" max="100" value="50" class="slider" id="proteinRange">
+				</div>
 
-			<div id="testF"></div>
-			<div id="testC"></div>
-			<div id="testP"></div>
-			<div id="results" >
-			<!-- <p>The Dictionary with the top 11 elements: {{ filters }}</p>
+				<div id="similarSnacksInput">
+					<input placeholder="Snacks that you like" name="similarSnacks" id="similarSnacks" type="text"></input>
+				</div>
+				<div id="submit">
+					<button type="button" class="button" onclick="show()">Feed Me!</button>
+				</div>
+			</div>
+		</form>
 
-				{% for d in filters %}
-						<br>
-						<p>{{d}}</p>
-				{% endfor %}
-			</div> -->
+		<!-- <form class="formInputs" role="form">
+			<div id="selectors">
+				<div id="selectorsFat">
+					<p>Fat:</p>
+					<select id="Fat_Level" name="fatContent">
+					  <option value="None" selected>None</option>
+					  <option value="Low">Low Fat</option>
+					  <option value="Medium">Medium Fat</option>
+					  <option value="High">High Fat</option>
+					</select>
+				</div>
+				<div id="selectorsCarb">
+					<p>Carbs:</p>
+					<select id="Carb_Level" name="carbContent">
+					  <option value="None" selected>None</option>
+					  <option value="Low">Low Carb</option>
+					  <option value="Medium">Medium Carb</option>
+					  <option value="High">High Carb</option>
+					</select>
+				</div>
+				<div id="selectorsProtein">
+					<p>Protein:</p>
+					<select id="Protein_Level" name="proteinContent">
+					  <option value="None" selected>None</option>
+					  <option value="Low">Low Protein</option>
+					  <option value="Medium">Medium Protein</option>
+					  <option value="High">High Protein</option>
+					</select>
+				</div>
+				<div id="similarSnacks">
+					<input placeholder="Similar Snacks that you like" name="similarSnacks" id="similarSnacks"></input>
+				</div>
+				<div id="submit">
+					<button type="button" class="button" onclick="show()">Click Me</button>
+				</div>
+			</div>
+		</form> -->
+		<div id="testF"></div>
+		<div id="testC"></div>
+		<div id="testP"></div>
+		<div id="results" >
+		<!-- <p>The Dictionary with the top 11 elements: {{ filters }}</p>
+			{% for d in filters %}
+					<br>
+					<p>{{d}}</p>
+			{% endfor %}
+		</div> -->
 
 		<script>
-			var fat;
-			var carb;
-			var protein;
+			var carbSlider = document.getElementById("carbRange");
+			var fatSlider = document.getElementById("fatRange");
+			var proteinSlider = document.getElementById("proteinRange");
+			var similarSnacksInput = document.getElementById("similarSnacks");
 
 			function show() {
-				var fat = $('#Fat_Level').val();
-				var carb = $('#Carb_Level').val();
-		    var protein = $('#Protein_Level').val();
-		    var similarSnacks = $('#similarSnacks').val();
+				var fat = fatSlider.value > 67 ? "High" : fatSlider.value > 33 ? "Medium" : "Low";
+				var carb = carbSlider.value > 67 ? "High" : carbSlider.value > 33 ? "Medium" : "Low";
+		    	var protein = proteinSlider.value > 67 ? "High" : proteinSlider.value > 33 ? "Medium" : "Low";
+		    	var similarSnacks = similarSnacksInput.value;
+
+				var obj = {
+					fat: fat,
+					carb: carb,
+					protein: protein,
+					similarSnacks: similarSnacks
+				};
+
 				// AJAX call to retrieve the nutrient levels and similar snacks values
 				$.ajax({
 					url: '/filterLevels',
-					data: $('form').serialize(),
+					data: obj,
 					type: 'POST',
-		      async: true,
+		      		async: true,
 					success: function(response){
 						console.log(response);
-		        response=$.parseJSON( response );
-		        fat = response.fat;
-		        carb = response.carb;
-		        protein = response.protein;
-		        similarSnacks = response.similarSnacks;
+						response=$.parseJSON( response );
+						fat = response.fat;
+						carb = response.carb;
+						protein = response.protein;
+						similarSnacks = response.similarSnacks;
 						$.ajax({
 							url: '/filters',
-							data: $('form').serialize(),
+							data: obj,
 							type: 'POST',
-				      async: true,
+				      		async: true,
 							success: function(data){
 								// document.getElementById('results').innerHTML = data
 								// x = data.split(" ");
@@ -138,7 +170,7 @@
 				});
 
 				div = document.getElementById('results');
-    		div.style.display = "block";
+    			div.style.display = "block";
 				console.log(fat);
 				console.log(carb);
 				console.log(protein);
