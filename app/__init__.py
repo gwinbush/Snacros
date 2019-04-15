@@ -32,6 +32,8 @@ with open('Data/FINAL_snacks_data.pickle', 'rb') as f:
 with open("Data/title_to_index.pickle", "rb") as f:
 	title_to_index = pickle.load(f)
 
+with open("Data/titles_to_asin.pickle", "rb") as f:
+	titles_to_asin = pickle.load(f)
 
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
@@ -117,7 +119,7 @@ def filters():
 		sorted_row = np.argsort(cs, axis=1)[0][::-1]
 		query_snack = all_titles[sorted_row[1]]
 	print('NEW QUERY : ' + query_snack)
-	#SVD
+	# SVD
 	# print(filtered_snacks)
 	# print('svd')
 	data_lst = [(request, all_data[request]['description']) for request in filtered_snacks.keys()]
@@ -172,10 +174,11 @@ def filters():
 		scores_lst.append((snack, score))
 		scores_lst.sort(key=lambda tup: tup[1], reverse=True)
 
-	scored_filtered_lst = [(snack_name, percentagesDict[snack_name]) for (snack_name, snack_score) in scores_lst]
-	print(scores_lst[0])
+	base_url = 'https://amazon.com/dp/'
+	scored_filtered_lst = [(snack_name, percentagesDict[snack_name], base_url + titles_to_asin[snack_name]) for (snack_name, snack_score) in scores_lst]
+	print(scored_filtered_lst)
 	# print('finish')
-	return json.dumps(scored_filtered_lst);
+	return json.dumps(scored_filtered_lst)
 
 end_time = time.time()
 time_elapsed = end_time - start_time
