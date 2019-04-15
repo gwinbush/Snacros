@@ -40,7 +40,24 @@ with open("Data/title_to_index.pickle", "rb") as f:
 with open("Data/titles_to_asin.pickle", "rb") as f:
 	titles_to_asin = pickle.load(f)
 
+#REMOVING WEIRD ENTRIES
+pickle_in = open("Data/percentagesDict.pickle","rb");
+percentagesDict = pickle.load(pickle_in);
+
+percentagesDict.pop('')
 all_data.pop('')
+titles_to_remove = []
+for title, data in all_data.items():
+	if 'gerber' in title.lower():
+		titles_to_remove.append(title)
+	if 'lactation cookies' in title.lower():
+		titles_to_remove.append(title)
+	if 'pet' in title.lower():
+		titles_to_remove.append(title)
+
+for t in titles_to_remove:
+	all_data.pop(t)
+	percentagesDict.pop(t)
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 # DB
@@ -75,9 +92,6 @@ def filterLevels():
 
 @app.route('/filters', methods=['POST'])
 def filters():
-	pickle_in = open("Data/percentagesDict.pickle","rb");
-	percentagesDict = pickle.load(pickle_in);
-	percentagesDict.pop('')
 	fatLevel = request.form.get('fat');
 	carbLevel = request.form.get('carb');
 	proteinLevel = request.form.get('protein');
