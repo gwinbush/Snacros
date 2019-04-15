@@ -32,6 +32,7 @@
 						<p>Fats:</p>
 						<input type="range" min="1" max="100" value="50" class="slider" id="fatRange">
 					</div>
+
 					Don't care about fats?<input type="checkbox" id="fatInclude" onClick="fatAllow()">
 					<div class="slidecontainer">
 						<p>Proteins:</p>
@@ -109,7 +110,7 @@
 						carbSlider.disabled = true;
 					} else {
 						carbSlider.style.opacity = "0.7";
-						carbSlider.style.content.opacity = "1.0";
+						// carbSlider.style.content.opacity = "1.0";
 						carbSlider.disabled = false;
 					}
 				}
@@ -122,7 +123,7 @@
 						fatSlider.disabled = true;
 					} else {
 						fatSlider.style.opacity = "0.7";
-						fatSlider.style.hover.opacity = "1.0";
+						// fatSlider.style.content.opacity = "1.0";
 						fatSlider.disabled = false;
 					}
 				}
@@ -135,7 +136,7 @@
 						proteinSlider.disabled = true;
 					} else {
 						proteinSlider.style.opacity = "0.7";
-						proteinSlider.style.content.opacity = "1.0";
+						// proteinSlider.style.content.opacity = "1.0";
 						proteinSlider.disabled = false;
 					}
 				}
