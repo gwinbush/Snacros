@@ -100,32 +100,30 @@ def filters():
 	filtered_snacks = {}
 	# print(percentagesDict)
 	# print('before filter')
-	for product in percentagesDict.items():
-		fat = product[1]["fat"]
-		carb = product[1]["carb"]
-		protein = product[1]["protein"]
-		bool = True
+	for product, d in percentagesDict.items():
+		fat = d["fat"]
+		carb = d["carb"]
+		protein = d["protein"]
+		fat_bool = False
+		carb_bool = False
+		protein_bool = False
 
 		if (fatLevel == "Low" and fat > 0.0 and fat < 0.3) or (fatLevel == "Medium" and fat >= 0.3 and fat < 0.6) or (fatLevel == "High" and fat >= 0.6) or (fatLevel == "None"):
-			bool = bool * True
-		else:
-			bool = bool * False
+			fat_bool = True
 		if (carbLevel == "Low" and carb > 0.0 and carb < 0.1) or (carbLevel == "Medium" and carb >= 0.1 and carb < 0.2) or (carbLevel == "High" and carb >= 0.2) or (carbLevel == "None"):
-			bool = bool * True
-		else:
-			bool = bool * False
+			carb_bool = True
 		if (proteinLevel == "Low" and protein > 0.0 and protein < 0.2) or (proteinLevel == "Medium" and protein >= 0.2 and protein < 0.4) or (proteinLevel == "High" and protein >= 0.4) or (proteinLevel == "None"):
-			bool = bool * True
-		else:
-			bool = bool * False
-		if bool == True:
-			filtered_snacks[product[0]] = product[1]
+			protein_bool = True
+		filtered_snacks[product] = (carb_bool, protein_bool, fat_bool)
 		# filteredDictTop10 = {k: finalDict[k] for k in list(finalDict)[:11]};
 	# print('after filter')
 	#START RANKING STUFF
-	w1 = 0.2
-	w2 = 0.3
-	w3 = 0.5
+	w1 = 0.05 #does occur
+	w2 = 0.05 #rating
+	w3 = 0.3 #svd score
+	w4 = 0.2 #matches carb
+	w5 = 0.2 #matches protein
+	w6 = 0.2 #matches fat
 	# print(all_data)
 	# print('QUERY : ' + query_snack)
 	# FIND SIM SNACK IF QUERY NOT IN DATABASE
@@ -139,42 +137,17 @@ def filters():
 		cs=cosine_similarity(matrix[0], matrix)
 		sorted_row = np.argsort(cs, axis=1)[0][::-1]
 		query_snack = all_titles[sorted_row[1]]
-	print('NEW QUERY : ' + query_snack)
+	# print('NEW QUERY : ' + query_snack)
 	# SVD
 	# print(filtered_snacks)
 	# print('svd')
 	data_lst = [(request, all_data[request]['description']) for request in filtered_snacks.keys()]
-	# print(len(data_lst))
-	if len(data_lst) == 0:
-		# print('RETURN')
-		return json.dumps([])
+
 	data_lst.append((query_snack, all_data[query_snack]['description']))
 	vectorizer = TfidfVectorizer(stop_words = 'english', max_df = .7)
 	my_matrix = vectorizer.fit_transform([x[1] for x in data_lst]).transpose()
-	# print('SHAPE :' + str(my_matrix.shape))
-	# print('usv')
-	# u, s, v_trans = svds(my_matrix, k=len(data_lst)-1)
 
-	if len(data_lst) <= 10:
-		scores_lst = []
-		for snack in filtered_snacks.keys():
-			does_cooccur = snack in all_data[query_snack]['also_bought']
-			rating = all_data[snack]['rating']
-			# rating = 0
-			score = w1*does_cooccur + w2*rating
-
-			scores_lst.append((snack, score))
-			scores_lst.sort(key=lambda tup: tup[1], reverse=True)
-			base_url = 'https://amazon.com/dp/'
-			scored_filtered_lst = [(snack, percentagesDict[snack], base_url + titles_to_asin[snack]) for (snack, score) in scores_lst]
-
-			return json.dumps(scored_filtered_lst)
-
-	if len(data_lst) < 20:
-		words_compressed, _, docs_compressed = svds(my_matrix, k=len(data_lst)-1)
-	else:
-		words_compressed, _, docs_compressed = svds(my_matrix, k=20)
-	# print('after calc')
+	words_compressed, _, docs_compressed = svds(my_matrix, k=20)
 	docs_compressed = docs_compressed.transpose()
 	word_to_index = vectorizer.vocabulary_
 	words_compressed = normalize(words_compressed, axis = 1)
@@ -184,26 +157,23 @@ def filters():
 
 	sims = docs_compressed.dot(docs_compressed[snack_index_in,:])
 	asort = np.argsort(-sims)
-	# print('svd sort')
 	svd_sorted = [(data_lst[i][0],sims[i]/sims[asort[0]]) for i in asort[1:]]
 
 	#Return sorted list of sim scores
-	# print('sort')
 	scores_lst = []
 
 	for snack, svd_score in svd_sorted:
 		does_cooccur = snack in all_data[query_snack]['also_bought']
 		rating = all_data[snack]['rating']
-		# rating = 0
-		score = w1*does_cooccur + w2*rating + w3*svd_score
+		carb, protein, fat = filtered_snacks[snack]
+		score = w1*does_cooccur + w2*rating + w3*svd_score + w4*carb + w5*protein + w6*fat
 
 		scores_lst.append((snack, score))
 		scores_lst.sort(key=lambda tup: tup[1], reverse=True)
 
 	base_url = 'https://amazon.com/dp/'
 	scored_filtered_lst = [(snack_name, percentagesDict[snack_name], base_url + titles_to_asin[snack_name]) for (snack_name, snack_score) in scores_lst]
-	# print(scored_filtered_lst)
-	# print('finish')
+
 	return json.dumps(scored_filtered_lst)
 
 end_time = time.time()
