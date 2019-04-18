@@ -1,0 +1,108 @@
+import numpy as np
+import json
+import pickle
+from sklearn.preprocessing import normalize
+from sklearn.feature_extraction.text import TfidfVectorizer
+from scipy.sparse.linalg import svds
+
+#remove the snacks we dont want
+def remove_snacks():
+	with open('Data/FINAL_snacks_data.pickle', 'rb') as f:
+		all_data = pickle.load(f)
+	print(all_data)
+	with open('Data/percentagesDict.pickle', 'rb') as f:
+		percentagesDict = pickle.load(f)
+
+	percentagesDict.pop('')
+	all_data.pop('')
+
+	titles_to_remove = []
+	for title, data in all_data.items():
+		if 'gerber' in title.lower():
+			titles_to_remove.append(title)
+		if 'lactation cookies' in title.lower():
+			titles_to_remove.append(title)
+		if 'pet' in title.lower():
+			titles_to_remove.append(title)
+
+	for t in titles_to_remove:
+		all_data.pop(t)
+		percentagesDict.pop(t)
+
+	with open('Data/FINAL_snacks_data.pickle', 'wb') as f:
+		pickle.dump(all_data, f)
+
+	with open('Data/percentagesDict.pickle', 'wb') as f:
+		pickle.dump(percentagesDict, f)
+# remove_snacks()
+
+with open('Data/FINAL_snacks_data.pickle', 'rb') as f:
+	all_data = pickle.load(f)
+
+# create reverse indices
+title_to_ind = {}
+ind_to_title = {}
+new_titles_lst = all_data.keys()
+for i, title in enumerate(new_titles_lst):
+	title_to_ind[title] = i
+	ind_to_title[i] = title
+
+with open('Data/index_to_title.pickle', 'wb') as f:
+	pickle.dump(ind_to_title, f)
+
+with open('Data/title_to_index.pickle', 'wb') as f:
+	pickle.dump(title_to_ind, f)
+
+data_lst = []
+for i in range(len(ind_to_title)):
+	title = ind_to_title[i]
+	data_lst.append((title, all_data[title]['description']))
+
+#do svd
+vectorizer = TfidfVectorizer(stop_words = 'english', max_df = .7)
+my_matrix = vectorizer.fit_transform([descrip for t, descrip in data_lst]).transpose()
+
+words_compressed, _, docs_compressed = svds(my_matrix, k=20)
+docs_compressed = docs_compressed.transpose()
+
+docs_compressed = normalize(docs_compressed, axis = 1)
+
+with open('Data/docs_compressed.pickle', 'wb') as f:
+	pickle.dump(docs_compressed, f)
+
+
+"""Returns the 10 closest words to the input word and their scores"""
+def closest_words(word_in, k = 10):
+	if word_in not in word_to_index: 
+		return "Not in vocab."
+	sims = words_compressed.dot(words_compressed[word_to_index[word_in],:])
+	asort = np.argsort(-sims)[:k+1]
+	return [(index_to_word[i],sims[i]/sims[asort[0]]) for i in asort[1:]]
+
+
+"""Returns the 10 closest snacks to the input word and their scores"""
+def closest_snacks_to_word(word_in, k =  10):
+	if word_in not in word_to_index: 
+		return "Not in vocab."
+	sims = docs_compressed.dot(words_compressed[word_to_index[word_in],:])
+	asort = np.argsort(-sims)[:k+1]
+	return [(data_lst[i][0],sims[i]/sims[asort[0]]) for i in asort[1:]]
+
+# print(closest_words("cookie"))
+# print(closest_projects_to_word(''))
+
+
+"""Returns the 10 closest snacks to the input snack index and their scores."""
+def closest_snacks_to_snack(snack_index_in, k = 5):
+    sims = docs_compressed.dot(docs_compressed[snack_index_in,:])
+    asort = np.argsort(-sims)[:k+1]
+    return [(data_lst[i][0],sims[i]/sims[asort[0]]) for i in asort[1:]]
+# print(closest_snacks_to_snack(title_to_ind['Shultz Pretzels Thin Pretzels']))
+
+#prints the 10 closest snacks for the first 10 snacks
+# for i in range(10):
+#     print(data_lst[i][0])
+#     for title, score in closest_snacks(i):
+#         print("{}:{:.3f}".format(title[:40], score))
+#     print()
+

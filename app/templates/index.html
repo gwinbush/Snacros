@@ -195,9 +195,11 @@
 											carbPercentage = data[i][1].carb;
 											proteinPercentage = data[i][1].protein;
 											url = data[i][2]
+											score = data[i][3]
 											$('#results')
 												.append('<div class="catalog"><b>'+(i+1) + ". </b>" + "<b>"+data[i][0] +
-												"</b><p><b>Fat Percentage:</b> " + (fatPercentage*100).toFixed(2) +
+												"</b><p><b>Similarity Score:</b> " + score +
+												"</p> <p><b>Fat Percentage:</b> " + (fatPercentage*100).toFixed(2) +
 												"%</p> <p><b>Carb Percentage:</b> " + (carbPercentage*100).toFixed(2) +
 												"%</p> <p><b>Protein Percentage:</b> " + (proteinPercentage*100).toFixed(2) +
 												"%</p><a href=\"" + url + "\">" +
