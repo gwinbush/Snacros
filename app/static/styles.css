@@ -109,33 +109,53 @@ input{
   text-align: center;
 }
 
-#results{
-  display: none;
-}
-
 #netids{
   text-align: right;
   color: black;
-  position: fixed;
-  bottom: 5px;
+  position: sticky;
+  bottom: 0px;
   right: 5px;
   line-height: 5px;
   font-size: 11pt;
 }
 
-
-/* .catalog {
-    background-color: white;
-    position: relative;
+.catalog {
+    margin: 0 auto;
+    justify-content: center;
     display: inline-block;
-    border: black, solid;
+    position: static;
+    background-color: white;
+    border-color: black;
+    border-style: solid, 1px;
+    margin: 30px;
     top: 60px;
-    left: 0;
     float: left;
-    width: 20%;
-    height: 200%;
-    margin: 10px;
-    padding: 20px;
-    font-size: 10pt;
-    line-height: 5px;
-} */
+    width: 300px;
+    height: 500px;
+    padding: 10px;
+    z-index: 0;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#productImg{
+  width: 200px;
+  height: 200px;
+  display:block;
+  margin:auto;
+}
+
+#amazonImg{
+  display:block;
+  margin:auto;
+}
+
+/* div.catalog p{
+  line-height: 15px;
+  word-wrap: break-word;
+}
+div.catalog a{
+  z-index: 90;
+}
+div.catalog img{
+  z-index: 99;
+}

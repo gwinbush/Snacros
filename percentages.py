@@ -2,9 +2,19 @@ import pickle
 import time
 
 start_time = time.time()
+imagesDict = {}
 
 pickle_in = open("Data/FINAL_snacks_data.pickle","rb")
 AllFoodsDict = pickle.load(pickle_in)
+
+with open('Data/fixed_filtered_snacks_withURLs.pickle', 'rb') as f:
+	withURLs = pickle.load(f)
+
+for p in withURLs:
+     imagesDict[p] = withURLs[p]['imUrl']
+
+
+# print(withURLs)
 
 def percentages(AllFoodsDict):
     """ This function calculates the percentages in each snack that correspond to
@@ -33,16 +43,20 @@ def percentages(AllFoodsDict):
             carbPercentage = 0.0
             proteinPercentage = 0.0
         percentages[product_name] = {"fat": fatPercentage, "carb": carbPercentage, "protein": proteinPercentage}
-        
+
     return percentages
 
-percentagesDict = percentages(AllFoodsDict)
+# percentagesDict = percentages(AllFoodsDict)
 # print(percentagesDict["Salba Smart Organic White Corn Tortilla Chips"])
 # print(percentagesDict)
 
-pickle_out = open("Data/percentagesDict.pickle","wb")
-pickle.dump(percentagesDict, pickle_out)
-pickle_out.close()
+# pickle_out = open("Data/percentagesDict.pickle","wb")
+# pickle.dump(percentagesDict, pickle_out)
+# pickle_out.close()
+
+# pickle_out = open("Data/imagesDict.pickle","wb")
+# pickle.dump(imagesDict, pickle_out)
+# pickle_out.close()
 
 end_time = time.time()
 time_elapsed = end_time - start_time
