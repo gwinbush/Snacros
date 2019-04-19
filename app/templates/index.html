@@ -193,6 +193,7 @@
 									.addClass('text');
 							};
 						};
+						scrollToResults();
 					},
 					error: function(error){
 						console.log(error);
@@ -210,6 +211,12 @@
 				// console.log(carb);
 				// console.log(protein);
 			}
+			
+			var elmnt = document.getElementById("results");
+
+			function scrollToResults() {
+			  elmnt.scrollIntoView(true); // Top
+			}
 
 		</script>
 
@@ -221,4 +228,5 @@
 		</div>
 		<!-- {{ filters }} -->
 	</body>
+	
 </html>
