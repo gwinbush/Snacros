@@ -14,17 +14,19 @@ def remove_snacks():
 	with open('Data/percentagesDict.pickle', 'rb') as f:
 		percentagesDict = pickle.load(f)
 
-	percentagesDict.pop('')
-	all_data.pop('')
+	# percentagesDict.pop('')
+	# all_data.pop('')
 
 	titles_to_remove = []
 	for title, data in all_data.items():
-		if 'gerber' in title.lower():
-			titles_to_remove.append(title)
-		if 'lactation cookies' in title.lower():
-			titles_to_remove.append(title)
-		if 'pet' in title.lower():
-			titles_to_remove.append(title)
+		# if 'gerber' in title.lower():
+		# 	titles_to_remove.append(title)
+		# if 'lactation cookies' in title.lower():
+		# 	titles_to_remove.append(title)
+		# if 'pet' in title.lower():
+		# 	titles_to_remove.append(title)
+		if 'gift box' in title.lower():
+			titles_to_remove.append(title)	
 
 	for t in titles_to_remove:
 		all_data.pop(t)
