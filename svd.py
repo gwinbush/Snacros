@@ -56,12 +56,18 @@ with open('Data/title_to_index.pickle', 'wb') as f:
 with open('Data/titles_to_asin.pickle', 'rb') as f:
 	titles_to_asin = pickle.load(f)
 
+with open('Data/reviews_dict.pickle', 'rb') as f:
+	reviews_dict = pickle.load(f)
+
 data_lst = []
 for i in range(len(ind_to_title)):
 	title = ind_to_title[i]
 	asin = titles_to_asin[title]
 	if asin in reviews_dict.keys():
-		data_lst.append((title, all_data[title]['description'] + " " + reviews_dict[asin]))
+		add = ''
+		for rev in reviews_dict[asin]:
+			add += rev
+		data_lst.append((title, all_data[title]['description'] + " " + add))
 	else:
 		data_lst.append((title, all_data[title]['description']))
 
@@ -72,11 +78,24 @@ my_matrix = vectorizer.fit_transform([descrip for t, descrip in data_lst]).trans
 
 words_compressed, _, docs_compressed = svds(my_matrix, k=20)
 docs_compressed = docs_compressed.transpose()
+words_compressed = normalize(words_compressed, axis = 1)
+word_to_index = vectorizer.vocabulary_
+
+index_to_word = {i:t for t,i in word_to_index.items()}
 
 docs_compressed = normalize(docs_compressed, axis = 1)
 
 with open('Data/docs_compressed.pickle', 'wb') as f:
 	pickle.dump(docs_compressed, f)
+
+with open('Data/words_compressed.pickle', 'wb') as f:
+	pickle.dump(words_compressed, f)
+
+with open('Data/index_to_word.pickle', 'wb') as f:
+	pickle.dump(index_to_word, f)
+
+with open('Data/word_to_index.pickle', 'wb') as f:
+	pickle.dump(word_to_index, f)
 
 
 """Returns the 10 closest words to the input word and their scores"""
@@ -87,7 +106,7 @@ def closest_words(word_in, k = 10):
 	asort = np.argsort(-sims)[:k+1]
 	return [(index_to_word[i],sims[i]/sims[asort[0]]) for i in asort[1:]]
 
-word_to_index = vectorizer.vocabulary_
+# word_to_index = vectorizer.vocabulary_
 """Returns the 10 closest snacks to the input word and their scores"""
 def closest_snacks_to_word(word_in, k =  10):
 	if word_in not in word_to_index: 
@@ -106,7 +125,7 @@ def closest_snacks_to_snack(snack_index_in, k = 5):
     asort = np.argsort(-sims)[:k+1]
     return [(data_lst[i][0],sims[i]/sims[asort[0]]) for i in asort[1:]]
 # print(closest_snacks_to_snack(title_to_ind['Shultz Pretzels Thin Pretzels']))
-# print(closest_snacks_to_word('paleo'))
+print(closest_snacks_to_word('protein'))
 
 #prints the 10 closest snacks for the first 10 snacks
 # for i in range(10):

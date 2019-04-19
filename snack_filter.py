@@ -127,9 +127,9 @@ def reviews_lst_to_dict(lst):
 		review = i['reviewText']
 		review = review.replace('&#34', '').lower()
 		if asin in asin_to_data.keys():
-			asin_to_data[asin] += " " + review
+			asin_to_data[asin].append(review)
 		else:
-			asin_to_data[asin] = review
+			asin_to_data[asin] = [review]
 	return asin_to_data
 # all_foods = json_to_food_lst("/Users/Judy/Desktop/meta_Grocery_and_Gourmet_Food.json")
 # filtered_snacks = filter_snacks(food_lst_to_dict(all_foods))
@@ -154,7 +154,10 @@ def reviews_lst_to_dict(lst):
 
 more_reviews = json_to_food_lst("/Users/Judy/Desktop/reviews_Grocery_and_Gourmet_Food_5.json")
 reviews_dict = reviews_lst_to_dict(more_reviews)
-# print(reviews_dict)
+with open('Data/reviews_dict.pickle', 'wb') as f:
+	pickle.dump(reviews_dict, f)
+# for title, lst in reviews_dict.items():
+# 	print(len(lst)) 
 
 
 

@@ -17,6 +17,7 @@ from sklearn.preprocessing import normalize
 from sklearn.feature_extraction.text import TfidfVectorizer
 from scipy.sparse.linalg import svds
 from sklearn.metrics.pairwise import cosine_similarity
+import math
 
 start_time = time.time()
 # Configure app
@@ -41,7 +42,6 @@ with open("Data/title_to_index.pickle", "rb") as f:
 with open("Data/titles_to_asin.pickle", "rb") as f:
 	titles_to_asin = pickle.load(f)
 
-#REMOVING WEIRD ENTRIES
 with open("Data/percentagesDict.pickle","rb") as f:
 	percentagesDict = pickle.load(f);
 
@@ -50,6 +50,24 @@ with open('Data/docs_compressed.pickle', 'rb') as f:
 
 with open("Data/imagesDict.pickle","rb") as f:
 	imagesDict = pickle.load(f);
+
+with open('Data/reviews_dict.pickle', 'rb') as f:
+	reviews_dict = pickle.load(f)
+with open('Data/index_to_word.pickle', 'rb') as f:
+	index_to_word = pickle.load(f)
+
+with open('Data/word_to_index.pickle', 'rb') as f:
+	word_to_index = pickle.load(f)
+with open('Data/words_compressed.pickle', 'rb') as f:
+	words_compressed = pickle.load(f)
+
+total_reviews = 0
+for title, _ in all_data.items():
+	asin = titles_to_asin[title]
+	if asin in reviews_dict.keys():
+		total_reviews += len(reviews_dict[asin])
+	else:
+		total_reviews += 1
 
 
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
@@ -89,7 +107,7 @@ def filters():
 	fatLevel = request.form.get('fat');
 	carbLevel = request.form.get('carb');
 	proteinLevel = request.form.get('protein');
-	query_snack = request.form.get('similarSnacks');
+	query = request.form.get('similarSnacks');
 
 	filtered_snacks = {}
 	for product, d in percentagesDict.items():
@@ -111,10 +129,20 @@ def filters():
 	#START RANKING STUFF
 	w1 = 0.05 #does occur
 	w2 = 0.05 #rating
-	w3 = 0.3 #svd score
-	w4 = 0.2 #matches carb
-	w5 = 0.2 #matches protein
-	w6 = 0.2 #matches fat
+	w3 = 0.4 #svd score
+	w4 = 0.5 #matches carb
+	w5 = 0.5 #matches protein
+	w6 = 0.5 #matches fat
+	w7 = 0.1 #num ratings
+
+	if ',' in query:
+		query_lst = query.split(',')
+	else:
+		query_lst = query.split(' ')
+	for word in query_lst:
+		word.strip()
+
+	query_snack = ' '.join(query_lst)
 
 	# FIND SIM SNACK IF QUERY NOT IN DATABASE
 	if query_snack not in list(all_data.keys()):
@@ -126,8 +154,9 @@ def filters():
 		sorted_row = np.argsort(cs, axis=1)[0][::-1]
 		query_snack = all_titles[sorted_row[1]]
 	print('NEW QUERY : ' + query_snack)
+	# print(all_data[query_snack])
 
-	# SVD
+	# SVD snack to snack
 	snack_index_in = title_to_index[query_snack]
 
 	sims = docs_compressed.dot(docs_compressed[snack_index_in,:])
@@ -135,18 +164,39 @@ def filters():
 	svd_sorted = [(index_to_title[i],sims[i]/sims[asort[0]]) for i in asort[1:]]
 	svd_sorted.append((query_snack, 1.0))
 
+	#SVD word to snack
+	word_sims_lst = []
+	for word_in in query_lst:
+		print('loop')
+		if word_in not in word_to_index.keys(): 
+			word_sims_lst.append(np.zeros((docs_compressed.shape[0], 1)))
+		else:
+			sims = docs_compressed.dot(words_compressed[word_to_index[word_in],:])
+			word_sims_lst.append(sims)
+			asort = np.argsort(-sims)
+
 	#Return sorted list of sim scores
 	# scores_lst = []
 	scores = np.zeros((len(svd_sorted),1))
 	for i in range(len(svd_sorted)):
 		snack, svd_score = svd_sorted[i]
+		snack_ind = title_to_index[snack]
+		for sim_lst in word_sims_lst:
+			# print(sim_lst.shape)
+			svd_score += sim_lst[snack_ind]
 		does_cooccur = snack in all_data[query_snack]['also_bought']
 		rating = all_data[snack]['rating']
+		asin = titles_to_asin[snack]
+		if asin in reviews_dict.keys():
+			num_ratings = math.log(len(reviews_dict[asin]))
+		else:
+			num_ratings = math.log(1)
+
 		carb, protein, fat = filtered_snacks[snack]
-		score = w1*does_cooccur + w2*rating + w3*svd_score + w4*carb + w5*protein + w6*fat
+		score = w1*does_cooccur + w2*rating + w3*svd_score + w4*carb + w5*protein + w6*fat + w7*num_ratings
 		scores[i] = score
 	# print(scores)
-	# scores = normalize(scores, axis = 1)
+	# scores = normalize(scores, axis = 0)
 	# scores = scores.astype(int)
 	# print(scores[20:])
 
@@ -155,7 +205,7 @@ def filters():
 		snack, _ = svd_sorted[j]
 		scores_lst.append((snack, round(float(scores[j,:]),2)))
 	scores_lst.sort(key=lambda tup: tup[1], reverse=True)
-
+	# print(scores_lst)
 	base_url = 'https://amazon.com/dp/'
 	scored_filtered_lst = [(snack_name, percentagesDict[snack_name], base_url + titles_to_asin[snack_name], snack_score, imagesDict[snack_name]) for (snack_name, snack_score) in scores_lst]
 
