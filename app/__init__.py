@@ -111,6 +111,8 @@ def filters():
 
 	filtered_snacks = {}
 	for product, d in percentagesDict.items():
+		if 'baby' in product.lower():
+			print(product)
 		fat = d["fat"]
 		carb = d["carb"]
 		protein = d["protein"]
@@ -196,7 +198,7 @@ def filters():
 		score = w1*does_cooccur + w2*rating + w3*svd_score + w4*carb + w5*protein + w6*fat + w7*num_ratings
 		scores[i] = score
 	# print(scores)
-	# scores = normalize(scores, axis = 0)
+	scores = np.divide(scores, np.amax(scores))
 	# scores = scores.astype(int)
 	# print(scores[20:])
 

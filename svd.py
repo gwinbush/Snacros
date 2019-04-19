@@ -25,7 +25,9 @@ def remove_snacks():
 		# 	titles_to_remove.append(title)
 		# if 'pet' in title.lower():
 		# 	titles_to_remove.append(title)
-		if 'gift box' in title.lower():
+		if 'little yums' in title.lower():
+			titles_to_remove.append(title)	
+		if 'baby food' in title.lower():
 			titles_to_remove.append(title)	
 
 	for t in titles_to_remove:
