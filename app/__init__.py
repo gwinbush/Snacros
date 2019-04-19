@@ -48,6 +48,9 @@ with open("Data/percentagesDict.pickle","rb") as f:
 with open('Data/docs_compressed.pickle', 'rb') as f:
 	docs_compressed = pickle.load(f)
 
+with open("Data/imagesDict.pickle","rb") as f:
+	imagesDict = pickle.load(f);
+
 
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
@@ -104,7 +107,7 @@ def filters():
 		if (proteinLevel == "Low" and protein > 0.0 and protein < 0.2) or (proteinLevel == "Medium" and protein >= 0.2 and protein < 0.4) or (proteinLevel == "High" and protein >= 0.4) or (proteinLevel == "None"):
 			protein_bool = True
 		filtered_snacks[product] = (carb_bool, protein_bool, fat_bool)
-	
+
 	#START RANKING STUFF
 	w1 = 0.05 #does occur
 	w2 = 0.05 #rating
@@ -154,7 +157,7 @@ def filters():
 	scores_lst.sort(key=lambda tup: tup[1], reverse=True)
 
 	base_url = 'https://amazon.com/dp/'
-	scored_filtered_lst = [(snack_name, percentagesDict[snack_name], base_url + titles_to_asin[snack_name], snack_score) for (snack_name, snack_score) in scores_lst]
+	scored_filtered_lst = [(snack_name, percentagesDict[snack_name], base_url + titles_to_asin[snack_name], snack_score, imagesDict[snack_name]) for (snack_name, snack_score) in scores_lst]
 
 	return json.dumps(scored_filtered_lst)
 
