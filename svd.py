@@ -19,16 +19,38 @@ def remove_snacks():
 
 	titles_to_remove = []
 	for title, data in all_data.items():
-		# if 'gerber' in title.lower():
-		# 	titles_to_remove.append(title)
-		# if 'lactation cookies' in title.lower():
-		# 	titles_to_remove.append(title)
-		# if 'pet' in title.lower():
-		# 	titles_to_remove.append(title)
+		if 'gerber' in title.lower():
+			titles_to_remove.append(title)
+		if 'lactation cookies' in title.lower():
+			titles_to_remove.append(title)
+		if 'pet' in title.lower():
+			titles_to_remove.append(title)
 		if 'little yums' in title.lower():
 			titles_to_remove.append(title)	
 		if 'baby food' in title.lower():
 			titles_to_remove.append(title)	
+		if 'mum-mum' in title.lower():
+			titles_to_remove.append(title)	
+		if 'happy baby' in title.lower():
+			titles_to_remove.append(title)	
+		if 'nurturme' in title.lower():
+			titles_to_remove.append(title)
+		if 'Ella\'s Kitchen' in title:
+			titles_to_remove.append(title)
+		if 'Plum Organics' in title:
+			titles_to_remove.append(title)
+		if 'mum mum' in title.lower():
+			titles_to_remove.append(title)
+		if 'ellas kitchen' in title.lower():
+			titles_to_remove.append(title)
+		if 'gift basket' in title.lower():
+			titles_to_remove.append(title)
+		if 'baby wipes' in title.lower():
+			titles_to_remove.append(title)
+		if 'tastybaby' in title.lower():
+			titles_to_remove.append(title)
+		if 'happybaby' in title.lower():
+			titles_to_remove.append(title)
 
 	for t in titles_to_remove:
 		all_data.pop(t)
@@ -39,7 +61,7 @@ def remove_snacks():
 
 	with open('Data/percentagesDict.pickle', 'wb') as f:
 		pickle.dump(percentagesDict, f)
-# remove_snacks()
+remove_snacks()
 
 with open('Data/FINAL_snacks_data.pickle', 'rb') as f:
 	all_data = pickle.load(f)

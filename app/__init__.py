@@ -61,14 +61,6 @@ with open('Data/word_to_index.pickle', 'rb') as f:
 with open('Data/words_compressed.pickle', 'rb') as f:
 	words_compressed = pickle.load(f)
 
-total_reviews = 0
-for title, _ in all_data.items():
-	asin = titles_to_asin[title]
-	if asin in reviews_dict.keys():
-		total_reviews += len(reviews_dict[asin])
-	else:
-		total_reviews += 1
-
 
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
@@ -111,8 +103,6 @@ def filters():
 
 	filtered_snacks = {}
 	for product, d in percentagesDict.items():
-		if 'baby' in product.lower():
-			print(product)
 		fat = d["fat"]
 		carb = d["carb"]
 		protein = d["protein"]
@@ -155,8 +145,7 @@ def filters():
 		cs=cosine_similarity(matrix[0], matrix)
 		sorted_row = np.argsort(cs, axis=1)[0][::-1]
 		query_snack = all_titles[sorted_row[1]]
-	print('NEW QUERY : ' + query_snack)
-	# print(all_data[query_snack])
+	# print('NEW QUERY : ' + query_snack)
 
 	# SVD snack to snack
 	snack_index_in = title_to_index[query_snack]
@@ -178,13 +167,11 @@ def filters():
 			asort = np.argsort(-sims)
 
 	#Return sorted list of sim scores
-	# scores_lst = []
 	scores = np.zeros((len(svd_sorted),1))
 	for i in range(len(svd_sorted)):
 		snack, svd_score = svd_sorted[i]
 		snack_ind = title_to_index[snack]
 		for sim_lst in word_sims_lst:
-			# print(sim_lst.shape)
 			svd_score += sim_lst[snack_ind]
 		does_cooccur = snack in all_data[query_snack]['also_bought']
 		rating = all_data[snack]['rating']
@@ -197,17 +184,14 @@ def filters():
 		carb, protein, fat = filtered_snacks[snack]
 		score = w1*does_cooccur + w2*rating + w3*svd_score + w4*carb + w5*protein + w6*fat + w7*num_ratings
 		scores[i] = score
-	# print(scores)
-	scores = np.divide(scores, np.amax(scores))
-	# scores = scores.astype(int)
-	# print(scores[20:])
+
+	scores = np.divide(scores, np.amax(scores)) #normalize
 
 	scores_lst = []
 	for j in range(len(svd_sorted)):
 		snack, _ = svd_sorted[j]
 		scores_lst.append((snack, round(float(scores[j,:]),2)))
 	scores_lst.sort(key=lambda tup: tup[1], reverse=True)
-	# print(scores_lst)
 	base_url = 'https://amazon.com/dp/'
 	scored_filtered_lst = [(snack_name, percentagesDict[snack_name], base_url + titles_to_asin[snack_name], snack_score, imagesDict[snack_name]) for (snack_name, snack_score) in scores_lst]
 
