@@ -4,6 +4,7 @@ import pickle
 from sklearn.preprocessing import normalize
 from sklearn.feature_extraction.text import TfidfVectorizer
 from scipy.sparse.linalg import svds
+from snack_filter import reviews_dict
 
 #remove the snacks we dont want
 def remove_snacks():
@@ -52,11 +53,18 @@ with open('Data/index_to_title.pickle', 'wb') as f:
 
 with open('Data/title_to_index.pickle', 'wb') as f:
 	pickle.dump(title_to_ind, f)
+with open('Data/titles_to_asin.pickle', 'rb') as f:
+	titles_to_asin = pickle.load(f)
 
 data_lst = []
 for i in range(len(ind_to_title)):
 	title = ind_to_title[i]
-	data_lst.append((title, all_data[title]['description']))
+	asin = titles_to_asin[title]
+	if asin in reviews_dict.keys():
+		data_lst.append((title, all_data[title]['description'] + " " + reviews_dict[asin]))
+	else:
+		data_lst.append((title, all_data[title]['description']))
+
 
 #do svd
 vectorizer = TfidfVectorizer(stop_words = 'english', max_df = .7)
@@ -79,7 +87,7 @@ def closest_words(word_in, k = 10):
 	asort = np.argsort(-sims)[:k+1]
 	return [(index_to_word[i],sims[i]/sims[asort[0]]) for i in asort[1:]]
 
-
+word_to_index = vectorizer.vocabulary_
 """Returns the 10 closest snacks to the input word and their scores"""
 def closest_snacks_to_word(word_in, k =  10):
 	if word_in not in word_to_index: 
@@ -98,6 +106,7 @@ def closest_snacks_to_snack(snack_index_in, k = 5):
     asort = np.argsort(-sims)[:k+1]
     return [(data_lst[i][0],sims[i]/sims[asort[0]]) for i in asort[1:]]
 # print(closest_snacks_to_snack(title_to_ind['Shultz Pretzels Thin Pretzels']))
+# print(closest_snacks_to_word('paleo'))
 
 #prints the 10 closest snacks for the first 10 snacks
 # for i in range(10):
