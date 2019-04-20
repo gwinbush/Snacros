@@ -61,6 +61,12 @@ with open('Data/word_to_index.pickle', 'rb') as f:
 with open('Data/words_compressed.pickle', 'rb') as f:
 	words_compressed = pickle.load(f)
 
+with open('Data/ratings_dict.pickle', 'rb') as f:
+	ratings = pickle.load(f)
+
+with open('Data/servingAndCalorieDict.pickle', 'rb') as f:
+	otherDict = pickle.load(f)
+
 
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
@@ -103,6 +109,7 @@ def filters():
 
 	filtered_snacks = {}
 	for product, d in percentagesDict.items():
+		# print(product, d)
 		fat = d["fat"]
 		carb = d["carb"]
 		protein = d["protein"]
@@ -116,8 +123,14 @@ def filters():
 			carb_bool = True
 		if (proteinLevel == "Low" and protein > 0.0 and protein < 0.2) or (proteinLevel == "Medium" and protein >= 0.2 and protein < 0.4) or (proteinLevel == "High" and protein >= 0.4) or (proteinLevel == "None"):
 			protein_bool = True
-		filtered_snacks[product] = (carb_bool, protein_bool, fat_bool)
 
+		serving = otherDict[product]["serving"]
+		calories = otherDict[product]["calories"]
+		description = otherDict[product]["description"]
+		# print(calories)
+		filtered_snacks[product] = (carb_bool, protein_bool, fat_bool, serving, calories, description)
+
+	# print(percentagesDict["Wild Salmon Jerky 1 oz. Pouch - Teriyaki"])
 	#START RANKING STUFF
 	w1 = 0.05 #does occur
 	w2 = 0.05 #rating
@@ -159,7 +172,7 @@ def filters():
 	word_sims_lst = []
 	for word_in in query_lst:
 		print('loop')
-		if word_in not in word_to_index.keys(): 
+		if word_in not in word_to_index.keys():
 			word_sims_lst.append(np.zeros((docs_compressed.shape[0], 1)))
 		else:
 			sims = docs_compressed.dot(words_compressed[word_to_index[word_in],:])
@@ -181,7 +194,7 @@ def filters():
 		else:
 			num_ratings = math.log(1)
 
-		carb, protein, fat = filtered_snacks[snack]
+		carb, protein, fat, serving, calories, description = filtered_snacks[snack]
 		score = w1*does_cooccur + w2*rating + w3*svd_score + w4*carb + w5*protein + w6*fat + w7*num_ratings
 		scores[i] = score
 
@@ -193,7 +206,15 @@ def filters():
 		scores_lst.append((snack, round(float(scores[j,:]),2)))
 	scores_lst.sort(key=lambda tup: tup[1], reverse=True)
 	base_url = 'https://amazon.com/dp/'
-	scored_filtered_lst = [(snack_name, percentagesDict[snack_name], base_url + titles_to_asin[snack_name], snack_score, imagesDict[snack_name]) for (snack_name, snack_score) in scores_lst]
+
+	def avg_rating(snack):
+		ratings_lst = ratings[titles_to_asin[snack]]
+		average_rating = sum(ratings_lst) / len(ratings_lst)
+		return round(average_rating,2)
+
+
+
+	scored_filtered_lst = [(snack_name, otherDict[snack_name], base_url + titles_to_asin[snack_name], snack_score, imagesDict[snack_name], avg_rating(snack_name), otherDict[snack_name]) for (snack_name, snack_score) in scores_lst]
 
 	return json.dumps(scored_filtered_lst)
 
