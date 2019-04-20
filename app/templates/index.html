@@ -18,17 +18,20 @@
 			<div id="sliders">
 				<div class="slidecontainer" width="100%">
 					<p>Carbs:</p>
-					<input type="range" min="1" max="100" value="50" class="slider" id="carbRange">
+					<output for="carbRange" class="volume" id="out1">50</output>
+					<input oninput="outputUpdate(value, name)" onmouseup="releaseUpdate(value)" step="1" type="range" min="1" max="100" value="50" class="slider" id="carbRange" name="carbRange">
 				</div>
 				Don't care about carbs?<input type="checkbox" id="carbInclude" onClick="carbAllow()">
 				<div class="slidecontainer">
 					<p>Fats:</p>
-					<input type="range" min="1" max="100" value="50" class="slider" id="fatRange">
+					<output for="fatRange" class="volume" id="out2">50</output>
+					<input oninput="outputUpdate(value, name)" onmouseup="releaseUpdate(value)" step="1" type="range" min="1" max="100" value="50" class="slider" id="fatRange" name="fatRange">
 				</div>
 				Don't care about fats?<input type="checkbox" id="fatInclude" onClick="fatAllow()">
 				<div class="slidecontainer">
 					<p>Proteins:</p>
-					<input type="range" min="1" max="100" value="50" class="slider" id="proteinRange">
+					<output for="proteinRange" class="volume" id="out3">50</output>
+					<input oninput="outputUpdate(value, name)" onmouseup="releaseUpdate(value)" step="1" type="range" min="1" max="100" value="50" class="slider" id="proteinRange" name="proteinRange">
 				</div>
 				Don't care about proteins?<input type="checkbox" id="proteinInclude" onClick="proteinAllow()">
 				<div id="similarSnacksInput">
@@ -40,46 +43,22 @@
 			</div>
 		</form>
 
-		<!-- <form class="formInputs" role="form">
-			<div id="selectors">
-				<div id="selectorsFat">
-					<p>Fat:</p>
-					<select id="Fat_Level" name="fatContent">
-					  <option value="None" selected>None</option>
-					  <option value="Low">Low Fat</option>
-					  <option value="Medium">Medium Fat</option>
-					  <option value="High">High Fat</option>
-					</select>
-				</div>
-				<div id="selectorsCarb">
-					<p>Carbs:</p>
-					<select id="Carb_Level" name="carbContent">
-					  <option value="None" selected>None</option>
-					  <option value="Low">Low Carb</option>
-					  <option value="Medium">Medium Carb</option>
-					  <option value="High">High Carb</option>
-					</select>
-				</div>
-				<div id="selectorsProtein">
-					<p>Protein:</p>
-					<select id="Protein_Level" name="proteinContent">
-					  <option value="None" selected>None</option>
-					  <option value="Low">Low Protein</option>
-					  <option value="Medium">Medium Protein</option>
-					  <option value="High">High Protein</option>
-					</select>
-				</div>
-				<div id="similarSnacks">
-					<input placeholder="Similar Snacks that you like" name="similarSnacks" id="similarSnacks"></input>
-				</div>
-				<div id="submit">
-					<button type="button" class="button" onclick="show()">Click Me</button>
-				</div>
-			</div>
-		</form> -->
-		<div id="results" >
+		<div id="resultsContainer">
+			<div id="results">
+		</div>
 
 		<script>
+
+		var posX;
+		var posY;
+
+		$("body").mousemove(function(e) {
+			posX = e.pageX;
+			posY = e.pageY;
+		})
+
+
+
 			var carbSlider = document.getElementById("carbRange");
 			var fatSlider = document.getElementById("fatRange");
 			var proteinSlider = document.getElementById("proteinRange");
@@ -124,6 +103,26 @@
 				}
 			}
 
+			function outputUpdate(vol, name) {
+			  var output = document.querySelector(".volume");
+				output.value = vol;
+				output.style.display = "block";
+				var winW = $(window).width();
+			  output.style.left =  posX - 20 +'px';
+				if(name == "carbRange"){
+					pos = output.offsetHeight - 15;
+				}else if(name == "fatRange"){
+					pos = output.offsetHeight + 105;
+				}else if(name== "proteinRange"){
+					pos = output.offsetHeight + 225;
+				}
+				output.style.top =  pos - 50 +'px';
+			}
+			function releaseUpdate(vol) {
+				var output = document.querySelector(".volume");
+				output.value = vol;
+				output.style.display = "none";
+			}
 
 			function show() {
 				var fat = fatSlider.disabled ? "None" : fatSlider.value > 67 ? "High" : fatSlider.value > 33 ? "Medium" : "Low";
@@ -137,29 +136,12 @@
 					protein: protein,
 					similarSnacks: similarSnacks
 				};
-
-				// AJAX call to retrieve the nutrient levels and similar snacks values
-				// $.ajax({
-				// 	url: '/filterLevels',
-				// 	data: obj,
-				// 	type: 'POST',
-				// 	success: function(response){
-				// 		console.log(response);
-				// 		response=$.parseJSON( response );
-				// 		fat = response.fat;
-				// 		carb = response.carb;
-				// 		protein = response.protein;
-				// 		similarSnacks = response.similarSnacks;
+				
 				$.ajax({
 					url: '/filters',
 					data: obj,
 					type: 'POST',
 					success: function(data){
-						// document.getElementById('results').innerHTML = data
-						// x = data.split(" ");
-						// x = toString(x).split("{");
-						// console.log(x);
-						// document.getElementById('results').innerHTML = x;
 
 						data=$.parseJSON( data );
 						console.log(data);
@@ -199,19 +181,8 @@
 						console.log(error);
 					}
 			});
-				// 	},
-				// 	error: function(error){
-				// 		console.log(error);
-				// 	}
-				// });
-
-				// div = document.getElementById('results');
-    		// div.style.display = "block";
-				// console.log(fat);
-				// console.log(carb);
-				// console.log(protein);
 			}
-			
+
 			var elmnt = document.getElementById("results");
 
 			function scrollToResults() {
@@ -226,7 +197,6 @@
 			{{ net_id3 }},
 			{{ net_id4 }}
 		</div>
-		<!-- {{ filters }} -->
 	</body>
-	
+
 </html>
