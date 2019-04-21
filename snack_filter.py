@@ -3,7 +3,6 @@ import ast
 import csv,os
 import re
 import pickle
-	
 
 def parse_title(snack_title):
 	snack_title = snack_title.replace('&amp;', '&')
@@ -86,7 +85,7 @@ def filter_snacks(data):
 	return filtered_products
 
 
-"""Turns list of dictionaries into a single dictionary with snack titles as keys and 
+"""Turns list of dictionaries into a single dictionary with snack titles as keys and
 dictionary of other data as values"""
 def food_lst_to_dict(lst):
 	food_dict = {}
@@ -131,7 +130,21 @@ def reviews_lst_to_dict(lst):
 		else:
 			asin_to_data[asin] = [review]
 	return asin_to_data
-# all_foods = json_to_food_lst("/Users/Judy/Desktop/meta_Grocery_and_Gourmet_Food.json")
+
+def ratings_lst_to_dict(lst):
+	asin_to_data = {}
+	for i in lst:
+		asin = i['asin']
+		print(asin)
+		rating = i['overall']
+		if asin in asin_to_data.keys():
+			asin_to_data[asin].append(rating)
+		else:
+			asin_to_data[asin] = [rating]
+	return asin_to_data
+# all_foods = json_to_food_lst("Data/meta_Grocery_and_Gourmet_Food.json")
+# for p in all_foods:
+# 	print(p)
 # filtered_snacks = filter_snacks(food_lst_to_dict(all_foods))
 # # print(filtered_snacks)
 # # print(snack_titles)
@@ -152,13 +165,39 @@ def reviews_lst_to_dict(lst):
 # with open('Data/filtered_snacks.json', 'w') as file:
 #     json.dump(filtered_snacks, file)
 
-more_reviews = json_to_food_lst("/Users/Judy/Desktop/reviews_Grocery_and_Gourmet_Food_5.json")
-reviews_dict = reviews_lst_to_dict(more_reviews)
-with open('Data/reviews_dict.pickle', 'wb') as f:
-	pickle.dump(reviews_dict, f)
+# more_reviews = json_to_food_lst("/Users/Judy/Desktop/reviews_Grocery_and_Gourmet_Food_5.json")
+# reviews_dict = reviews_lst_to_dict(more_reviews)
+# with open('Data/reviews_dict.pickle', 'wb') as f:
+# 	pickle.dump(reviews_dict, f)
+# 		print(len(lst))
 # for title, lst in reviews_dict.items():
-# 	print(len(lst)) 
+# 	print(len(lst))
+# with open('Data/meta_Grocery_and_Gourmet_Food.json', 'r') as f:
+# 	snacks = json.load(f)
+# print(snacks)
+#
+# more_reviews = json_to_food_lst("/Users/Judy/Desktop/reviews_Grocery_and_Gourmet_Food_5.json")
+# reviews_dict = reviews_lst_to_dict(more_reviews)
+# with open('Data/reviews_dict.pickle', 'wb') as f:
+# 	pickle.dump(reviews_dict, f)
 
 
+# reviews_dict = reviews_lst_to_dict(more_reviews)
+# print(reviews_dict)
+# with open('Data/reviews_dict.pickle', 'wb') as f:
+# 	pickle.dump(reviews_dict, f)
 
-	
+# with open('Data/reviews_dict.pickle', 'rb') as f:
+# 	reviews_dict = pickle.load(f)
+# for title, lst in reviews_dict.items():
+# 	print(title, lst, "\n")
+#
+# more_reviews = json_to_food_lst("/Users/Paula/Desktop/reviews_Grocery_and_Gourmet_Food.json")
+# ratings_dict = ratings_lst_to_dict(more_reviews)
+# print(ratings_dict)
+# with open('Data/ratings_dict.pickle', 'wb') as f:
+# 	pickle.dump(ratings_dict, f)
+
+# with open('Data/ratings_dict.pickle', 'rb') as f:
+# 	ratings = pickle.load(f)
+# print(ratings)

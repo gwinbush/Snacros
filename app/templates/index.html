@@ -17,18 +17,21 @@
 		<form class="formInputs" role="form"></form>
 			<div id="sliders">
 				<div class="slidecontainer" width="100%">
-					<p>Carbs:</p>
-					<input type="range" min="1" max="100" value="50" class="slider" id="carbRange">
+					<p id="one">Carbs:</p>
+					<output for="carbRange" class="volume" id="out1">50</output>
+					<input oninput="outputUpdate(value, name)" onmouseup="releaseUpdate(value)" step="1" type="range" min="1" max="100" value="50" class="slider" id="carbRange" name="carbRange">
 				</div>
 				Don't care about carbs?<input type="checkbox" id="carbInclude" onClick="carbAllow()">
 				<div class="slidecontainer">
-					<p>Fats:</p>
-					<input type="range" min="1" max="100" value="50" class="slider" id="fatRange">
+					<p id="two">Fats:</p>
+					<output for="fatRange" class="volume" id="out2">50</output>
+					<input oninput="outputUpdate(value, name)" onmouseup="releaseUpdate(value)" step="1" type="range" min="1" max="100" value="50" class="slider" id="fatRange" name="fatRange">
 				</div>
 				Don't care about fats?<input type="checkbox" id="fatInclude" onClick="fatAllow()">
 				<div class="slidecontainer">
-					<p>Proteins:</p>
-					<input type="range" min="1" max="100" value="50" class="slider" id="proteinRange">
+					<p id="three">Proteins:</p>
+					<output for="proteinRange" class="volume" id="out3">50</output>
+					<input oninput="outputUpdate(value, name)" onmouseup="releaseUpdate(value)" step="1" type="range" min="1" max="100" value="50" class="slider" id="proteinRange" name="proteinRange">
 				</div>
 				Don't care about proteins?<input type="checkbox" id="proteinInclude" onClick="proteinAllow()">
 				<div id="similarSnacksInput">
@@ -40,46 +43,22 @@
 			</div>
 		</form>
 
-		<!-- <form class="formInputs" role="form">
-			<div id="selectors">
-				<div id="selectorsFat">
-					<p>Fat:</p>
-					<select id="Fat_Level" name="fatContent">
-					  <option value="None" selected>None</option>
-					  <option value="Low">Low Fat</option>
-					  <option value="Medium">Medium Fat</option>
-					  <option value="High">High Fat</option>
-					</select>
-				</div>
-				<div id="selectorsCarb">
-					<p>Carbs:</p>
-					<select id="Carb_Level" name="carbContent">
-					  <option value="None" selected>None</option>
-					  <option value="Low">Low Carb</option>
-					  <option value="Medium">Medium Carb</option>
-					  <option value="High">High Carb</option>
-					</select>
-				</div>
-				<div id="selectorsProtein">
-					<p>Protein:</p>
-					<select id="Protein_Level" name="proteinContent">
-					  <option value="None" selected>None</option>
-					  <option value="Low">Low Protein</option>
-					  <option value="Medium">Medium Protein</option>
-					  <option value="High">High Protein</option>
-					</select>
-				</div>
-				<div id="similarSnacks">
-					<input placeholder="Similar Snacks that you like" name="similarSnacks" id="similarSnacks"></input>
-				</div>
-				<div id="submit">
-					<button type="button" class="button" onclick="show()">Click Me</button>
-				</div>
-			</div>
-		</form> -->
-		<div id="results" >
+		<div id="resultsContainer">
+			<div id="results">
+		</div>
 
 		<script>
+
+		var posX;
+		var posY;
+
+		$("body").mousemove(function(e) {
+			posX = e.pageX;
+			posY = e.pageY;
+		})
+
+
+
 			var carbSlider = document.getElementById("carbRange");
 			var fatSlider = document.getElementById("fatRange");
 			var proteinSlider = document.getElementById("proteinRange");
@@ -124,6 +103,26 @@
 				}
 			}
 
+			function outputUpdate(vol, name) {
+			  var output = document.querySelector(".volume");
+				output.value = vol;
+				output.style.display = "block";
+				var winW = $(window).width();
+			  output.style.left =  posX - 20 +'px';
+				if(name == "carbRange"){
+					pos = output.offsetHeight - 15;
+				}else if(name == "fatRange"){
+					pos = output.offsetHeight + 105;
+				}else if(name== "proteinRange"){
+					pos = output.offsetHeight + 225;
+				}
+				output.style.top =  pos - 50 +'px';
+			}
+			function releaseUpdate(vol) {
+				var output = document.querySelector(".volume");
+				output.value = vol;
+				output.style.display = "none";
+			}
 
 			function show() {
 				var fat = fatSlider.disabled ? "None" : fatSlider.value > 67 ? "High" : fatSlider.value > 33 ? "Medium" : "Low";
@@ -138,28 +137,11 @@
 					similarSnacks: similarSnacks
 				};
 
-				// AJAX call to retrieve the nutrient levels and similar snacks values
-				// $.ajax({
-				// 	url: '/filterLevels',
-				// 	data: obj,
-				// 	type: 'POST',
-				// 	success: function(response){
-				// 		console.log(response);
-				// 		response=$.parseJSON( response );
-				// 		fat = response.fat;
-				// 		carb = response.carb;
-				// 		protein = response.protein;
-				// 		similarSnacks = response.similarSnacks;
 				$.ajax({
 					url: '/filters',
 					data: obj,
 					type: 'POST',
 					success: function(data){
-						// document.getElementById('results').innerHTML = data
-						// x = data.split(" ");
-						// x = toString(x).split("{");
-						// console.log(x);
-						// document.getElementById('results').innerHTML = x;
 
 						data=$.parseJSON( data );
 						console.log(data);
@@ -179,15 +161,25 @@
 								url = data[i][2]
 								score = data[i][3]
 								imageURL = data[i][4]
+								avgRating = data[i][5]
+								servingSize = data[i][6]["serving"]
+								calories = data[i][6]["calories"]
+								description = data[i][6]["description"]
+								description = description.substring(0,200)
+
 								$('#results')
 									.append('<div class="catalog"><img id="productImg" border=\"0\" src=\"' +
 									imageURL + '\"> <br>' +
 									'<b>'+(i+1) + ". </b>" + "<b>"+data[i][0] +
-									"</b><p><b>Similarity Score:</b> " + score +
-									"</p> <p><b>Fat Percentage:</b> " + (fatPercentage*100).toFixed(2) +
-									"%</p> <p><b>Carb Percentage:</b> " + (carbPercentage*100).toFixed(2) +
-									"%</p> <p><b>Protein Percentage:</b> " + (proteinPercentage*100).toFixed(2) +
-									"%</p><p><a href=\"" + url + "\">" +
+									"</b><p><b>Similarity Score:</b> " + score + "<br>" +
+									"</b><b>Average Amazon Rating:</b> " + avgRating + "<br>" +
+									"<b>Serving Size:</b> " + servingSize + "<br>" +
+									"<b>Serving Calories:</b> " + (calories).toFixed(0) + "<br>" +
+									"<b>Fat:</b> " + (fatPercentage).toFixed(2) + " g<br>" +
+									"<b>Carb:</b> " + (carbPercentage).toFixed(2) + " g<br>" +
+									"<b>Protein:</b> " + (proteinPercentage).toFixed(2) + " g<br><br>" +
+									"<b>Description:</b> " + description + "... Read more on Amazon" +
+									"</p><p><a href=\"" + url + "\">" +
 									"<img id=\"amazonImg\"border=\"0\" src=\"../static/buy_on_amazon.jpg\" width=\"200\">"
 									+ "</a></p><br><br>")
 									.addClass('text');
@@ -199,19 +191,8 @@
 						console.log(error);
 					}
 			});
-				// 	},
-				// 	error: function(error){
-				// 		console.log(error);
-				// 	}
-				// });
-
-				// div = document.getElementById('results');
-    		// div.style.display = "block";
-				// console.log(fat);
-				// console.log(carb);
-				// console.log(protein);
 			}
-			
+
 			var elmnt = document.getElementById("results");
 
 			function scrollToResults() {
@@ -226,7 +207,6 @@
 			{{ net_id3 }},
 			{{ net_id4 }}
 		</div>
-		<!-- {{ filters }} -->
 	</body>
-	
+
 </html>
