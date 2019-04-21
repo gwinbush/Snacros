@@ -107,8 +107,10 @@ def filters():
 	proteinLevel = request.form.get('protein');
 	query = request.form.get('similarSnacks');
 
-	nutrient_match = {}
-	non_nutrient_match = {}
+	filtered_snacks = {}
+
+	# nutrient_match = {}
+	# non_nutrient_match = {}
 	for product, d in percentagesDict.items():
 		# print(product, d)
 		fat = d["fat"]
@@ -124,14 +126,12 @@ def filters():
 			carb_bool = True
 		if (proteinLevel == "Low" and protein > 0.0 and protein < 0.2) or (proteinLevel == "Medium" and protein >= 0.2 and protein < 0.4) or (proteinLevel == "High" and protein >= 0.4) or (proteinLevel == "None"):
 			protein_bool = True
-<<<<<<< HEAD
-		nutrient_match[product] = (carb_bool, protein_bool, fat_bool)
+
+# 		nutrient_match[product] = (carb_bool, protein_bool, fat_bool)
 		# if (fat_bool and carb_bool and protein_bool):
 		# 	nutrient_match[product] = (carb_bool, protein_bool, fat_bool)
 		# else:
 		# 	non_nutrient_match[product] = (carb_bool, protein_bool, fat_bool)
-=======
->>>>>>> 1b8898f08dc88bc6fd29d7adce5dcdc5f46754cd
 
 		serving = otherDict[product]["serving"]
 		calories = otherDict[product]["calories"]
@@ -190,13 +190,7 @@ def filters():
 	#SVD word to snack
 	word_sims_lst = []
 	for word_in in query_lst:
-<<<<<<< HEAD
-		# print('loop')
-		if word_in not in word_to_index.keys(): 
-=======
-		print('loop')
 		if word_in not in word_to_index.keys():
->>>>>>> 1b8898f08dc88bc6fd29d7adce5dcdc5f46754cd
 			word_sims_lst.append(np.zeros((docs_compressed.shape[0], 1)))
 		else:
 			sims = docs_compressed.dot(words_compressed[word_to_index[word_in],:])
@@ -218,48 +212,46 @@ def filters():
 			num_ratings = math.log(len(reviews_dict[asin]))
 		else:
 			num_ratings = math.log(1)
-<<<<<<< HEAD
-		if snack in nutrient_match.keys():
-			carb, protein, fat = nutrient_match[snack]
-		else:
-			carb, protein, fat = non_nutrient_match[snack]
-		score = w3*snack_svd_score + w8*word_svd_score + w7*num_ratings + w2*rating + w4*carb + w5*protein + w6*fat
-=======
+		carb, protein, fat, _, _, _ = filtered_snacks[snack]
 
-		carb, protein, fat, serving, calories, description = filtered_snacks[snack]
-		score = w1*does_cooccur + w2*rating + w3*svd_score + w4*carb + w5*protein + w6*fat + w7*num_ratings
->>>>>>> 1b8898f08dc88bc6fd29d7adce5dcdc5f46754cd
+		# if snack in nutrient_match.keys():
+		# 	carb, protein, fat = nutrient_match[snack]
+		# else:
+		# 	carb, protein, fat = non_nutrient_match[snack]
+		score = w3*snack_svd_score + w8*word_svd_score + w7*num_ratings + w2*rating + w4*carb + w5*protein + w6*fat
+
 		scores[i] = score
 
 	# scores = np.divide(scores, np.amax(scores)) #normalize
 
-	match_scores_lst = []
-	non_match_scores_lst = []
+	scores_lst = []
+
+	# match_scores_lst = []
+	# non_match_scores_lst = []
 	for j in range(len(svd_sorted)):
 		snack, _ = svd_sorted[j]
-		if snack in nutrient_match.keys():
-			match_scores_lst.append((snack, round(float(scores[j,:]),2)))
+		scores_lst.append((snack, round(float(scores[j,:]),2)))
+		# if snack in nutrient_match.keys():
+		# 	match_scores_lst.append((snack, round(float(scores[j,:]),2)))
 		# else:
 		# 	non_match_scores_lst.append((snack, round(float(scores[j,:]),2)))
-	match_scores_lst.sort(key=lambda tup: tup[1], reverse=True)
+	# match_scores_lst.sort(key=lambda tup: tup[1], reverse=True)
 	# non_match_scores_lst.sort(key=lambda tup: tup[1], reverse=True)
+
+	scores_lst.sort(key=lambda tup: tup[1], reverse=True)
+
 	base_url = 'https://amazon.com/dp/'
-<<<<<<< HEAD
-	match_lst = [(snack_name, percentagesDict[snack_name], base_url + titles_to_asin[snack_name], snack_score, imagesDict[snack_name]) for (snack_name, snack_score) in match_scores_lst]
-	non_match_lst = [(snack_name, percentagesDict[snack_name], base_url + titles_to_asin[snack_name], snack_score, imagesDict[snack_name]) for (snack_name, snack_score) in match_scores_lst]
-=======
+	# match_lst = [(snack_name, percentagesDict[snack_name], base_url + titles_to_asin[snack_name], snack_score, imagesDict[snack_name]) for (snack_name, snack_score) in match_scores_lst]
+	# non_match_lst = [(snack_name, percentagesDict[snack_name], base_url + titles_to_asin[snack_name], snack_score, imagesDict[snack_name]) for (snack_name, snack_score) in match_scores_lst]
 
 	def avg_rating(snack):
 		ratings_lst = ratings[titles_to_asin[snack]]
 		average_rating = sum(ratings_lst) / len(ratings_lst)
 		return round(average_rating,2)
 
-
-
 	scored_filtered_lst = [(snack_name, otherDict[snack_name], base_url + titles_to_asin[snack_name], snack_score, imagesDict[snack_name], avg_rating(snack_name), otherDict[snack_name]) for (snack_name, snack_score) in scores_lst]
->>>>>>> 1b8898f08dc88bc6fd29d7adce5dcdc5f46754cd
 
-	return json.dumps(match_lst)
+	return json.dumps(scored_filtered_lst)
 
 end_time = time.time()
 time_elapsed = end_time - start_time
