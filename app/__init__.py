@@ -101,7 +101,8 @@ def filters():
 	proteinLevel = request.form.get('protein');
 	query = request.form.get('similarSnacks');
 
-	filtered_snacks = {}
+	nutrient_match = {}
+	non_nutrient_match = {}
 	for product, d in percentagesDict.items():
 		fat = d["fat"]
 		carb = d["carb"]
@@ -116,16 +117,30 @@ def filters():
 			carb_bool = True
 		if (proteinLevel == "Low" and protein > 0.0 and protein < 0.2) or (proteinLevel == "Medium" and protein >= 0.2 and protein < 0.4) or (proteinLevel == "High" and protein >= 0.4) or (proteinLevel == "None"):
 			protein_bool = True
-		filtered_snacks[product] = (carb_bool, protein_bool, fat_bool)
+		nutrient_match[product] = (carb_bool, protein_bool, fat_bool)
+		# if (fat_bool and carb_bool and protein_bool):
+		# 	nutrient_match[product] = (carb_bool, protein_bool, fat_bool)
+		# else:
+		# 	non_nutrient_match[product] = (carb_bool, protein_bool, fat_bool)
 
 	#START RANKING STUFF
-	w1 = 0.05 #does occur
-	w2 = 0.05 #rating
-	w3 = 0.4 #svd score
+	# w1 = 0.3 #does occur
+	# w2 = 0.5 #rating
+	# w3 = 1 #snack svd score
+	# w4 = 0.1 #matches carb
+	# w5 = 0.1 #matches protein
+	# w6 = 0.1 #matches fat
+	# w7 = 0.15 #num ratings
+	# w8 = 0.8 #word svd score
+
+	w1 = 0.3 #does occur
+	w2 = 0.5 #rating
+	w3 = 1 #snack svd score
 	w4 = 0.5 #matches carb
 	w5 = 0.5 #matches protein
 	w6 = 0.5 #matches fat
-	w7 = 0.1 #num ratings
+	w7 = 0.15 #num ratings
+	w8 = 0.8 #word svd score
 
 	if ',' in query:
 		query_lst = query.split(',')
@@ -145,7 +160,7 @@ def filters():
 		cs=cosine_similarity(matrix[0], matrix)
 		sorted_row = np.argsort(cs, axis=1)[0][::-1]
 		query_snack = all_titles[sorted_row[1]]
-	# print('NEW QUERY : ' + query_snack)
+	print('NEW QUERY : ' + query_snack)
 
 	# SVD snack to snack
 	snack_index_in = title_to_index[query_snack]
@@ -158,7 +173,7 @@ def filters():
 	#SVD word to snack
 	word_sims_lst = []
 	for word_in in query_lst:
-		print('loop')
+		# print('loop')
 		if word_in not in word_to_index.keys(): 
 			word_sims_lst.append(np.zeros((docs_compressed.shape[0], 1)))
 		else:
@@ -169,10 +184,11 @@ def filters():
 	#Return sorted list of sim scores
 	scores = np.zeros((len(svd_sorted),1))
 	for i in range(len(svd_sorted)):
-		snack, svd_score = svd_sorted[i]
+		snack, snack_svd_score = svd_sorted[i]
+		word_svd_score = 0
 		snack_ind = title_to_index[snack]
 		for sim_lst in word_sims_lst:
-			svd_score += sim_lst[snack_ind]
+			word_svd_score += sim_lst[snack_ind]
 		does_cooccur = snack in all_data[query_snack]['also_bought']
 		rating = all_data[snack]['rating']
 		asin = titles_to_asin[snack]
@@ -180,22 +196,30 @@ def filters():
 			num_ratings = math.log(len(reviews_dict[asin]))
 		else:
 			num_ratings = math.log(1)
-
-		carb, protein, fat = filtered_snacks[snack]
-		score = w1*does_cooccur + w2*rating + w3*svd_score + w4*carb + w5*protein + w6*fat + w7*num_ratings
+		if snack in nutrient_match.keys():
+			carb, protein, fat = nutrient_match[snack]
+		else:
+			carb, protein, fat = non_nutrient_match[snack]
+		score = w3*snack_svd_score + w8*word_svd_score + w7*num_ratings + w2*rating + w4*carb + w5*protein + w6*fat
 		scores[i] = score
 
-	scores = np.divide(scores, np.amax(scores)) #normalize
+	# scores = np.divide(scores, np.amax(scores)) #normalize
 
-	scores_lst = []
+	match_scores_lst = []
+	non_match_scores_lst = []
 	for j in range(len(svd_sorted)):
 		snack, _ = svd_sorted[j]
-		scores_lst.append((snack, round(float(scores[j,:]),2)))
-	scores_lst.sort(key=lambda tup: tup[1], reverse=True)
+		if snack in nutrient_match.keys():
+			match_scores_lst.append((snack, round(float(scores[j,:]),2)))
+		# else:
+		# 	non_match_scores_lst.append((snack, round(float(scores[j,:]),2)))
+	match_scores_lst.sort(key=lambda tup: tup[1], reverse=True)
+	# non_match_scores_lst.sort(key=lambda tup: tup[1], reverse=True)
 	base_url = 'https://amazon.com/dp/'
-	scored_filtered_lst = [(snack_name, percentagesDict[snack_name], base_url + titles_to_asin[snack_name], snack_score, imagesDict[snack_name]) for (snack_name, snack_score) in scores_lst]
+	match_lst = [(snack_name, percentagesDict[snack_name], base_url + titles_to_asin[snack_name], snack_score, imagesDict[snack_name]) for (snack_name, snack_score) in match_scores_lst]
+	non_match_lst = [(snack_name, percentagesDict[snack_name], base_url + titles_to_asin[snack_name], snack_score, imagesDict[snack_name]) for (snack_name, snack_score) in match_scores_lst]
 
-	return json.dumps(scored_filtered_lst)
+	return json.dumps(match_lst)
 
 end_time = time.time()
 time_elapsed = end_time - start_time

@@ -6,18 +6,28 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from scipy.sparse.linalg import svds
 from snack_filter import reviews_dict
 
+with open('Data/titles_to_asin.pickle', 'rb') as f:
+	titles_to_asin = pickle.load(f)
+
+with open('Data/reviews_dict.pickle', 'rb') as f:
+	reviews_dict = pickle.load(f)
+
 #remove the snacks we dont want
 def remove_snacks():
 	with open('Data/FINAL_snacks_data.pickle', 'rb') as f:
 		all_data = pickle.load(f)
-	print(all_data)
+	# print(all_data)
 	with open('Data/percentagesDict.pickle', 'rb') as f:
 		percentagesDict = pickle.load(f)
 
 	# percentagesDict.pop('')
 	# all_data.pop('')
-
 	titles_to_remove = []
+
+	# titles_to_remove = ['Jell-O Cook and Serve Pudding and Pie Filling Lemon', 
+	# 						'Fleischmann\'s Simply Homemade Baking Mix Pretzel Creations',
+	# 						'Gourmet Fishing Gear | Fishing Creel Deluxe Gourmet Snacks | Great Fishing Gift Idea!',
+	# 						'Pizza Bar']
 	for title, data in all_data.items():
 		if 'gerber' in title.lower():
 			titles_to_remove.append(title)
@@ -51,10 +61,15 @@ def remove_snacks():
 			titles_to_remove.append(title)
 		if 'happybaby' in title.lower():
 			titles_to_remove.append(title)
+		if titles_to_asin[title] == 'B00DGXB3AE':
+			titles_to_remove.append(title)
 
 	for t in titles_to_remove:
 		all_data.pop(t)
 		percentagesDict.pop(t)
+
+	if title == 'Pizza Bar Full Size)':
+		all_data['Pizza Bar'] = data
 
 	with open('Data/FINAL_snacks_data.pickle', 'wb') as f:
 		pickle.dump(all_data, f)
@@ -79,11 +94,6 @@ with open('Data/index_to_title.pickle', 'wb') as f:
 
 with open('Data/title_to_index.pickle', 'wb') as f:
 	pickle.dump(title_to_ind, f)
-with open('Data/titles_to_asin.pickle', 'rb') as f:
-	titles_to_asin = pickle.load(f)
-
-with open('Data/reviews_dict.pickle', 'rb') as f:
-	reviews_dict = pickle.load(f)
 
 data_lst = []
 for i in range(len(ind_to_title)):
@@ -96,7 +106,6 @@ for i in range(len(ind_to_title)):
 		data_lst.append((title, all_data[title]['description'] + " " + add))
 	else:
 		data_lst.append((title, all_data[title]['description']))
-
 
 #do svd
 vectorizer = TfidfVectorizer(stop_words = 'english', max_df = .7)
@@ -151,7 +160,7 @@ def closest_snacks_to_snack(snack_index_in, k = 5):
     asort = np.argsort(-sims)[:k+1]
     return [(data_lst[i][0],sims[i]/sims[asort[0]]) for i in asort[1:]]
 # print(closest_snacks_to_snack(title_to_ind['Shultz Pretzels Thin Pretzels']))
-print(closest_snacks_to_word('protein'))
+# print(closest_snacks_to_word('protein'))
 
 #prints the 10 closest snacks for the first 10 snacks
 # for i in range(10):
