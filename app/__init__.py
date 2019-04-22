@@ -91,15 +91,14 @@ def not_found(error):
 def index():
 	return render_template('index.html', net_id1=net_id1, net_id2=net_id2, net_id3=net_id3, net_id4=net_id4)
 
-@app.route('/filterLevels', methods=['POST'])
-def filterLevels():
-	fat =  request.form.get('fat');
-	carb = request.form.get('carb');
-	protein = request.form.get('protein');
-	similarSnacks = request.form.get('similarSnacks');
-	sortingInput = request.form.get('sortingInput');
-	dumps = json.dumps({'status':'OK','fat':fat,'carb':carb,'protein':protein, 'similarSnacks':similarSnacks, 'sortingInput': sortingInput});
-	return dumps;
+# @app.route('/filterLevels', methods=['POST'])
+# def filterLevels():
+# 	fat =  request.form.get('fat');
+# 	carb = request.form.get('carb');
+# 	protein = request.form.get('protein');
+# 	similarSnacks = request.form.get('similarSnacks');
+# 	dumps = json.dumps({'status':'OK','fat':fat,'carb':carb,'protein':protein, 'similarSnacks':similarSnacks});
+# 	return dumps;
 
 @app.route('/filters', methods=['POST'])
 def filters():
@@ -224,7 +223,10 @@ def filters():
 
 		scores[i] = score
 
-	# scores = np.divide(scores, np.amax(scores)) #normalize
+	scores = np.divide(scores, 5.5) #normalize
+	# norm = np.linalg.norm(scores)
+	# if norm != 0:
+	#    scores = np.divide(scores, norm)
 
 	scores_lst = []
 
