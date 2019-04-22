@@ -165,8 +165,8 @@ def ratings_lst_to_dict(lst):
 # with open('Data/filtered_snacks.json', 'w') as file:
 #     json.dump(filtered_snacks, file)
 
-# more_reviews = json_to_food_lst("/Users/Judy/Desktop/reviews_Grocery_and_Gourmet_Food_5.json")
-# reviews_dict = reviews_lst_to_dict(more_reviews)
+more_reviews = json_to_food_lst("/Users/Judy/Desktop/reviews_Grocery_and_Gourmet_Food_5.json")
+reviews_dict = reviews_lst_to_dict(more_reviews)
 # with open('Data/reviews_dict.pickle', 'wb') as f:
 # 	pickle.dump(reviews_dict, f)
 # 		print(len(lst))
