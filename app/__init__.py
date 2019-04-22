@@ -223,7 +223,7 @@ def filters():
 
 		scores[i] = score
 
-	scores = np.divide(scores, 5.5) #normalize
+	scores = np.divide(scores, 7) #normalize
 	# norm = np.linalg.norm(scores)
 	# if norm != 0:
 	#    scores = np.divide(scores, norm)
