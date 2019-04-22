@@ -59,11 +59,13 @@ def other(AllFoodsDict):
 		carb = carbG * carb_to_cal
 		proteinG = product['nutrients']['protein']
 		protein = proteinG * protein_to_cal
-		calories = fat + carb + protein
+		# calories = fat + carb + protein
+		calories = product['nutrients']['calories']
 		serving = product['nutrients']['serving']
 		description = product['description']
+		price = product['price']
 
-		info[product_name] = { "description": description, "calories": calories, "serving": serving, "fat": fatG, "carb": carbG, "protein": proteinG}
+		info[product_name] = { "description": description, "calories": calories, "serving": serving, "fat": fatG, "carb": carbG, "protein": proteinG, "price": price}
 
 	return info
 

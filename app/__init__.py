@@ -106,6 +106,7 @@ def filters():
 	carbLevel = request.form.get('carb');
 	proteinLevel = request.form.get('protein');
 	query = request.form.get('similarSnacks');
+	sortingInput = request.form.get('sortingInput');
 
 	filtered_snacks = {}
 
@@ -224,7 +225,7 @@ def filters():
 
 	scores = np.divide(scores, 5.5) #normalize
 	# norm = np.linalg.norm(scores)
-	# if norm != 0: 
+	# if norm != 0:
 	#    scores = np.divide(scores, norm)
 
 	scores_lst = []
@@ -252,7 +253,7 @@ def filters():
 		average_rating = sum(ratings_lst) / len(ratings_lst)
 		return round(average_rating,2)
 
-	scored_filtered_lst = [(snack_name, otherDict[snack_name], base_url + titles_to_asin[snack_name], snack_score, imagesDict[snack_name], avg_rating(snack_name), otherDict[snack_name]) for (snack_name, snack_score) in scores_lst]
+	scored_filtered_lst = [(snack_name, otherDict[snack_name], base_url + titles_to_asin[snack_name], snack_score, imagesDict[snack_name], avg_rating(snack_name), otherDict[snack_name], sortingInput) for (snack_name, snack_score) in scores_lst]
 
 	return json.dumps(scored_filtered_lst)
 

@@ -35,6 +35,15 @@
 					<input oninput="outputUpdate(value, name)" onmouseup="releaseUpdate(value)" step="1" type="range" min="1" max="100" value="50" class="slider" id="proteinRange" name="proteinRange">
 				</div>
 				Don't care about proteins?<input type="checkbox" id="proteinInclude" onClick="proteinAllow()">
+				<div class="sorting">
+					<p>Do you want to sort the results by price?
+							<select id="sortingInput" name="sortingInput" class="select-css">
+								<option value="No" selected="selected">No</option>
+							  <option value="HighToLow">High to Low</option>
+							  <option value="LowToHigh">Low to High</option>
+							</select>
+				</p>
+				</div>
 				<div id="similarSnacksInput">
 					<input placeholder="Snacks that you like" name="similarSnacks" id="similarSnacks" type="text"></input>
 				</div>
@@ -60,10 +69,12 @@
 
 
 
-			var carbSlider = document.getElementById("carbRange");
-			var fatSlider = document.getElementById("fatRange");
-			var proteinSlider = document.getElementById("proteinRange");
-			var similarSnacksInput = document.getElementById("similarSnacks");
+		var carbSlider = document.getElementById("carbRange");
+		var fatSlider = document.getElementById("fatRange");
+		var proteinSlider = document.getElementById("proteinRange");
+		var similarSnacksInput = document.getElementById("similarSnacks");
+		var sortingInput = document.getElementById("sortingInput");
+		console.log(sortingInput.value);
 
 			function carbAllow() {
 				var carbCheck = document.getElementById("carbInclude");
@@ -125,17 +136,28 @@
 				output.style.display = "none";
 			}
 
+			function sortByKey(array, key) {
+			    return array.sort(function(a, b) {
+			        var x = a[key]; var y = b[key];
+			        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+			    });
+			}
+
+
 			function show() {
 				var fat = fatSlider.disabled ? "None" : fatSlider.value > 67 ? "High" : fatSlider.value > 33 ? "Medium" : "Low";
 				var carb = carbSlider.disabled ? "None" : carbSlider.value > 67 ? "High" : carbSlider.value > 33 ? "Medium" : "Low";
 		    var protein = proteinSlider.disabled ? "None" : proteinSlider.value > 67 ? "High" : proteinSlider.value > 33 ? "Medium" : "Low";
 		    var similarSnacks = similarSnacksInput.value;
+				var sortingInput = document.getElementById("sortingInput").value;
+				console.log(sortingInput.value);
 
 				var obj = {
 					fat: fat,
 					carb: carb,
 					protein: protein,
-					similarSnacks: similarSnacks
+					similarSnacks: similarSnacks,
+					sortingInput: sortingInput
 				};
 
 				$.ajax({
@@ -154,6 +176,24 @@
 						}
 						else {
 
+							document.getElementById("results").innerHTML = "";
+							data = data.slice(0,12);
+							console.log(data)
+
+							if (data[0][7] == "LowToHigh") {
+								data = data.sort(function(a,b) {
+									return a[6].price - b[6].price;
+									console.log
+								});
+							}
+
+							if (data[0][7] == "HighToLow") {
+								data = data.sort(function(a,b) {
+									return b[6].price - a[6].price;
+									console.log
+								});
+							}
+
 							for (i = 0; i < 12; i++) {
 
 								fatPercentage = data[i][1].fat;
@@ -165,8 +205,16 @@
 								avgRating = data[i][5]
 								servingSize = data[i][6]["serving"]
 								calories = data[i][6]["calories"]
+								price = data[i][6]["price"]
+								sortingInput = data[i][7]
 								description = data[i][6]["description"]
 								description = description.substring(0,200)
+
+								if (price == null) {
+									price = "Price not available"
+								} else {
+									price = "$" + price
+								}
 
 								$('#results')
 									.append('<div class="catalog"><img id="productImg" border=\"0\" src=\"' +
@@ -178,7 +226,8 @@
 									"<b>Serving Calories:</b> " + (calories).toFixed(0) + "<br>" +
 									"<b>Fat:</b> " + (fatPercentage).toFixed(2) + " g<br>" +
 									"<b>Carb:</b> " + (carbPercentage).toFixed(2) + " g<br>" +
-									"<b>Protein:</b> " + (proteinPercentage).toFixed(2) + " g<br><br>" +
+									"<b>Protein:</b> " + (proteinPercentage).toFixed(2) + " g<br>" +
+									"<b>price:</b> " + price + "<br><br>" +
 									"<b>Description:</b> " + description + "... Read more on Amazon" +
 									"</p><p><a href=\"" + url + "\">" +
 									"<img id=\"amazonImg\"border=\"0\" src=\"../static/buy_on_amazon.jpg\" width=\"200\">"
