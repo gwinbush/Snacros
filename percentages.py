@@ -53,14 +53,17 @@ def other(AllFoodsDict):
 	info = {}
 
 	for product_name, product in AllFoodsDictCopy.items():
-		fat = product['nutrients']['fat'] * fat_to_cal
-		carb = product['nutrients']['carbohydrates'] * carb_to_cal
-		protein = product['nutrients']['protein'] * protein_to_cal
+		fatG = product['nutrients']['fat']
+		fat = fatG * fat_to_cal
+		carbG = product['nutrients']['carbohydrates']
+		carb = carbG * carb_to_cal
+		proteinG = product['nutrients']['protein']
+		protein = proteinG * protein_to_cal
 		calories = fat + carb + protein
 		serving = product['nutrients']['serving']
 		description = product['description']
 
-		info[product_name] = { "description": description, "calories": calories, "serving": serving, "fat": fat, "carb": carb, "protein": protein}
+		info[product_name] = { "description": description, "calories": calories, "serving": serving, "fat": fatG, "carb": carbG, "protein": proteinG}
 
 	return info
 
