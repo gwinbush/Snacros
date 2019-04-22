@@ -8,10 +8,15 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	</head>
 	<body>
-		<div id="title">
-			<h1 class="text">Snacros</h1>
-			<!-- image gotten from https://unsplash.com/photos/oWN1tKuUpJI (@amoon ra -->
-
+		<div id="header">
+			<div id="Prototypes">
+				<a href="https://snacros.herokuapp.com/" style="color: white"> <b>Prototype 1</b> </a> <br>
+				<a href="https://snacros-v2.herokuapp.com/" style="color: white"> <b>Prototype 2</b> </a>
+			</div>
+			<div id="title">
+				<h1 class="text">Snacros</h1>
+				<!-- image gotten from https://unsplash.com/photos/oWN1tKuUpJI (@amoon ra -->
+			</div>
 		</div>
 
 		<h3 class="text">What levels of nutrients are you looking for in your snack?</h3>
@@ -145,6 +150,8 @@
 
 
 			function show() {
+
+
 				var fat = fatSlider.disabled ? "None" : fatSlider.value > 67 ? "High" : fatSlider.value > 33 ? "Medium" : "Low";
 				var carb = carbSlider.disabled ? "None" : carbSlider.value > 67 ? "High" : carbSlider.value > 33 ? "Medium" : "Low";
 		    var protein = proteinSlider.disabled ? "None" : proteinSlider.value > 67 ? "High" : proteinSlider.value > 33 ? "Medium" : "Low";
@@ -165,6 +172,10 @@
 					data: obj,
 					type: 'POST',
 					success: function(data){
+
+						document.getElementById("results").innerHTML = "";
+						$('#results')
+							.append('<div class="loader"></div>')
 
 						data=$.parseJSON( data );
 						console.log(data);
@@ -227,7 +238,7 @@
 									"<b>Fat:</b> " + (fatPercentage).toFixed(2) + " g<br>" +
 									"<b>Carb:</b> " + (carbPercentage).toFixed(2) + " g<br>" +
 									"<b>Protein:</b> " + (proteinPercentage).toFixed(2) + " g<br>" +
-									"<b>price:</b> " + price + "<br><br>" +
+									"<b>Price:</b> " + price + "<br><br>" +
 									"<b>Description:</b> " + description + "... Read more on Amazon" +
 									"</p><p><a href=\"" + url + "\">" +
 									"<img id=\"amazonImg\"border=\"0\" src=\"../static/buy_on_amazon.jpg\" width=\"200\">"
