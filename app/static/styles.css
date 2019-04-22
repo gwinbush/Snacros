@@ -109,7 +109,7 @@ h1{
 
 #title{
   height:20%;
-  background-image: url('background1.jpg');
+  background-image: url('background1.jpg'); /* image gotten from https://unsplash.com/photos/oWN1tKuUpJI (@amoon ra)  */
   background-size: 70%;
   background-position: center center;
   text-align:center;
