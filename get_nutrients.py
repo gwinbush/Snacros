@@ -5,7 +5,7 @@ from myfitnesspal import Client
 client = Client("gabewinbush@gmail.com")
 
 #Load snack data
-with open('Data/filtered_snacks.json') as json_file:
+with open('Data/FINAL_snacks_data.json') as json_file:
     data = json.load(json_file)
 
 new_data = {}
@@ -35,7 +35,7 @@ for title, info in data.items():
             "name": encode(food_info.name),
             "brand": encode(food_info.brand),
             "verified": food_info.verified,
-            "serving": encode(food_info.serving),
+            "serving": str(food_info.servings[0]).replace("x ", ""),
             "calories": food_info.calories,
             "calcium": food_info.calcium,
             "carbohydrates": food_info.carbohydrates,
