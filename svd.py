@@ -61,6 +61,10 @@ def remove_snacks():
 			titles_to_remove.append(title)
 		if 'happybaby' in title.lower():
 			titles_to_remove.append(title)
+		if 'gift' in title.lower():
+			titles_to_remove.append(title)
+		if 'seasoning' in title.lower():
+			titles_to_remove.append(title)
 		if titles_to_asin[title] == 'B00DGXB3AE':
 			titles_to_remove.append(title)
 
@@ -68,8 +72,12 @@ def remove_snacks():
 		all_data.pop(t)
 		percentagesDict.pop(t)
 
-	if title == 'Pizza Bar Full Size)':
-		all_data['Pizza Bar'] = data
+	# for title, data in all_data.items():
+	# 	if ')' in title and '(' not in title:
+	# 		all_data[title.replace(')', '')] = data
+	# 	if title == 'Pizza Bar Full Size)':
+	# 		all_data['Pizza Bar'] = data
+
 
 	with open('Data/FINAL_snacks_data.pickle', 'wb') as f:
 		pickle.dump(all_data, f)
