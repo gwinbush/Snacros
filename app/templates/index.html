@@ -150,7 +150,9 @@
 
 
 			function show() {
-
+				
+				$('#results')
+					.append('<div class="loader"></div>')
 
 				var fat = fatSlider.disabled ? "None" : fatSlider.value > 67 ? "High" : fatSlider.value > 33 ? "Medium" : "Low";
 				var carb = carbSlider.disabled ? "None" : carbSlider.value > 67 ? "High" : carbSlider.value > 33 ? "Medium" : "Low";
@@ -174,8 +176,6 @@
 					success: function(data){
 
 						document.getElementById("results").innerHTML = "";
-						$('#results')
-							.append('<div class="loader"></div>')
 
 						data=$.parseJSON( data );
 						console.log(data);
