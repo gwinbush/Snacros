@@ -267,22 +267,21 @@ h3{
     padding: .6em 1.4em .5em .8em;
     width: 10%;
     max-width: 100%;
-    box-sizing: border-box;
     margin: auto;
     -moz-appearance: none;
     -webkit-appearance: none;
     appearance: none;
-    background-image: url('dropdown-arrow.svg'),
-      linear-gradient(to bottom, #4CAF50 0%,#009900 100%);
+    background-image: url('dropdown-arrow.svg');
     background-repeat: no-repeat, repeat;
     background-position: right .7em top 50%, 0 0;
     background-size: 1em auto, 100%;
-    color: #fff;
-    background-color: #4CAF50;
+    color: black;
+    border-color:#fc6c27;
     border: none;
-    border-radius: 15px;
-    box-shadow: 0 5px 5px #999;
+    border-radius: 50px;
     font-family: "Neucha", -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #fff;
+    border:solid 2px #7d7d7d;
 }
 .select-css::-ms-expand {
     display: none;
