@@ -82,20 +82,21 @@
 
 		var posX;
 		var posY;
+		var listOfResultsDeleted = []
+		var data;
+		var dataCopy;
 
 		$("body").mousemove(function(e) {
 			posX = e.pageX;
 			posY = e.pageY;
 		})
 
-
-
 		var carbSlider = document.getElementById("carbRange");
 		var fatSlider = document.getElementById("fatRange");
 		var proteinSlider = document.getElementById("proteinRange");
 		var similarSnacksInput = document.getElementById("similarSnacks");
 		var sortingInput = document.getElementById("sortingInput");
-		console.log(sortingInput.value);
+		// console.log(sortingInput.value);
 
 			function carbAllow() {
 				var carbCheck = document.getElementById("carbInclude");
@@ -164,9 +165,64 @@
 			    });
 			}
 
+			function deleteFunction(value){
+				listOfResultsDeleted.push(value);
+				dataCopy.splice(value,1);
+				return printResults(dataCopy);
+			};
+
+			function printResults(data){
+				document.getElementById("results").innerHTML = "";
+				for (i = 0; i < 12; i++) {
+
+					fatPercentage = data[i][1].fat;
+					carbPercentage = data[i][1].carb;
+					proteinPercentage = data[i][1].protein;
+					url = data[i][2]
+					score = data[i][3]
+					imageURL = data[i][4]
+					avgRating = data[i][5]
+					servingSize = data[i][6]["serving"]
+					calories = data[i][6]["calories"]
+					price = data[i][6]["price"]
+					sortingInput = data[i][7]
+					description = data[i][6]["description"]
+					description = description.substring(0,200)
+
+					if (price == null) {
+						price = "Price not available"
+					} else {
+						price = "$" + price
+					}
+
+					$('#results')
+						.append('<div class="catalog"> ' +
+						'<div class="boxClose" onClick="deleteFunction('+i+')">' +
+							'<a class="close"></a></div>' +
+						'<img id="productImg" border=\"0\" src=\"' +
+						imageURL + '\"> <br>' +
+						'<b>'+(i+1) + ". </b>" + "<b>"+data[i][0] +
+						"</b><p><b>Similarity Score:</b> " + score + "<br>" +
+						"</b><b>Average Amazon Rating:</b> " + avgRating + "<br>" +
+						"<b>Serving Size:</b> " + servingSize + "<br>" +
+						"<b>Serving Calories:</b> " + (calories).toFixed(0) + "<br>" +
+						"<b>Fat:</b> " + (fatPercentage).toFixed(2) + " g<br>" +
+						"<b>Carb:</b> " + (carbPercentage).toFixed(2) + " g<br>" +
+						"<b>Protein:</b> " + (proteinPercentage).toFixed(2) + " g<br>" +
+						"<b>Price:</b> " + price + "<br><br>" +
+						"<b>Description:</b> " + description + "... Read more on Amazon" +
+						"</p><p><a href=\"" + url + "\">" +
+						"<img id=\"amazonImg\"border=\"0\" src=\"../static/buy_on_amazon.jpg\" width=\"200\">"
+						+ "</a></p><br><br>")
+						.addClass('text');
+				};
+			};
+
 
 			function show() {
+
 				document.getElementById("results").innerHTML = "";
+
 				$('#results')
 					.append('<div class="loader"></div>')
 
@@ -213,63 +269,26 @@
 						else {
 
 							document.getElementById("results").innerHTML = "";
+							dataCopy = data;
 							data = data.slice(0,12);
 							console.log(data)
 
 							if (data[0][7] == "LowToHigh") {
 								data = data.sort(function(a,b) {
 									return a[6].price - b[6].price;
-									console.log
+									// console.log
 								});
 							}
 
 							if (data[0][7] == "HighToLow") {
 								data = data.sort(function(a,b) {
 									return b[6].price - a[6].price;
-									console.log
+									// console.log
 								});
-							}
-
-							for (i = 0; i < 12; i++) {
-
-								fatPercentage = data[i][1].fat;
-								carbPercentage = data[i][1].carb;
-								proteinPercentage = data[i][1].protein;
-								url = data[i][2]
-								score = data[i][3]
-								imageURL = data[i][4]
-								avgRating = data[i][5]
-								servingSize = data[i][6]["serving"]
-								calories = data[i][6]["calories"]
-								price = data[i][6]["price"]
-								sortingInput = data[i][7]
-								description = data[i][6]["description"]
-								description = description.substring(0,200)
-
-								if (price == null) {
-									price = "Price not available"
-								} else {
-									price = "$" + price
-								}
-
-								$('#results')
-									.append('<div class="catalog"><img id="productImg" border=\"0\" src=\"' +
-									imageURL + '\"> <br>' +
-									'<b>'+(i+1) + ". </b>" + "<b>"+data[i][0] +
-									"</b><p><b>Similarity Score:</b> " + score + "<br>" +
-									"</b><b>Average Amazon Rating:</b> " + avgRating + "<br>" +
-									"<b>Serving Size:</b> " + servingSize + "<br>" +
-									"<b>Serving Calories:</b> " + (calories).toFixed(0) + "<br>" +
-									"<b>Fat:</b> " + (fatPercentage).toFixed(2) + " g<br>" +
-									"<b>Carb:</b> " + (carbPercentage).toFixed(2) + " g<br>" +
-									"<b>Protein:</b> " + (proteinPercentage).toFixed(2) + " g<br>" +
-									"<b>Price:</b> " + price + "<br><br>" +
-									"<b>Description:</b> " + description + "... Read more on Amazon" +
-									"</p><p><a href=\"" + url + "\">" +
-									"<img id=\"amazonImg\"border=\"0\" src=\"../static/buy_on_amazon.jpg\" width=\"200\">"
-									+ "</a></p><br><br>")
-									.addClass('text');
 							};
+
+							printResults(data);
+
 						};
 						scrollToResults();
 					},
@@ -284,7 +303,6 @@
 			function scrollToResults() {
 			  elmnt.scrollIntoView(true); // Top
 			}
-
 		</script>
 
 		<div id="netids" class="text">
