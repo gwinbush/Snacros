@@ -67,7 +67,6 @@ with open('Data/ratings_dict.pickle', 'rb') as f:
 with open('Data/servingAndCalorieDict.pickle', 'rb') as f:
 	otherDict = pickle.load(f)
 
-
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 # DB
@@ -107,9 +106,13 @@ def filters():
 	proteinLevel = request.form.get('protein');
 	query = request.form.get('similarSnacks');
 	sortingInput = request.form.get('sortingInput');
+	vegetarian = request.form.get('vegetarian');
+	vegan = request.form.get('vegan');
+	peanut_free = request.form.get('peanut_free');
+	gluten_free = request.form.get('gluten_free');
 
 	filtered_snacks = {}
-
+	
 	# nutrient_match = {}
 	# non_nutrient_match = {}
 	for product, d in percentagesDict.items():
@@ -159,7 +162,7 @@ def filters():
 	w6 = 0.5 #matches fat
 	w7 = 0.15 #num ratings
 	w8 = 0.8 #word svd score
-
+	
 	if ',' in query:
 		query_lst = query.split(',')
 	else:
@@ -219,7 +222,19 @@ def filters():
 		# 	carb, protein, fat = nutrient_match[snack]
 		# else:
 		# 	carb, protein, fat = non_nutrient_match[snack]
+
 		score = w3*snack_svd_score + w8*word_svd_score + w7*num_ratings + w2*rating + w4*carb + w5*protein + w6*fat
+
+		#Filter out dietary restrictions
+		if vegetarian == 'true' and not all_data[snack]['vegetarian']:
+			score = 0
+		if vegan == 'true'and not all_data[snack]['vegan']:
+			score = 0
+		if peanut_free == 'true' and not all_data[snack]['peanut_free']:
+			score = 0
+		if gluten_free == 'true' and not all_data[snack]['gluten_free']:
+			score = 0
+
 
 		scores[i] = score
 
@@ -234,6 +249,7 @@ def filters():
 	# non_match_scores_lst = []
 	for j in range(len(svd_sorted)):
 		snack, _ = svd_sorted[j]
+
 		scores_lst.append((snack, round(float(scores[j,:]),2)))
 		# if snack in nutrient_match.keys():
 		# 	match_scores_lst.append((snack, round(float(scores[j,:]),2)))
@@ -244,7 +260,7 @@ def filters():
 
 	scores_lst.sort(key=lambda tup: tup[1], reverse=True)
 
-	base_url = 'https://amazon.com/dp/'
+	base_url = 'https://www.amazon.com/dp/'
 	# match_lst = [(snack_name, percentagesDict[snack_name], base_url + titles_to_asin[snack_name], snack_score, imagesDict[snack_name]) for (snack_name, snack_score) in match_scores_lst]
 	# non_match_lst = [(snack_name, percentagesDict[snack_name], base_url + titles_to_asin[snack_name], snack_score, imagesDict[snack_name]) for (snack_name, snack_score) in match_scores_lst]
 

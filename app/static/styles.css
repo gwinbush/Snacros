@@ -332,3 +332,30 @@ h3{
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+#myCheckbox, #myCheckbox2, #myCheckbox3, #myCheckbox4 {
+  display: none;
+}
+
+#myCheckbox+label, #myCheckbox2+label, #myCheckbox3+label , #myCheckbox4+label {
+  -webkit-transition: all 500ms ease;
+  transition: all 500ms ease;
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 50px;
+  background-color: #fff;
+  border:solid 2px #7d7d7d;
+  padding: 0.5rem 2rem;
+  display: inline-block;
+  -moz-user-select: -moz-none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+
+#myCheckbox:checked+label, #myCheckbox2:checked+label, #myCheckbox3:checked+label, #myCheckbox4:checked+label {
+  -webkit-transition: all 500ms ease;
+  transition: all 500ms ease;
+  background-color:#fc6c27; color: white; border-color:#fc6c27;
+}
