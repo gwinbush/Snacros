@@ -355,6 +355,7 @@ h3{
 }
 .boxClose:after {
   transform: rotate(-45deg);
+}
 
 #myCheckbox, #myCheckbox2, #myCheckbox3, #myCheckbox4 {
   display: none;
