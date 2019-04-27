@@ -40,6 +40,22 @@
 					<input oninput="outputUpdate(value, name)" onmouseup="releaseUpdate(value)" step="1" type="range" min="1" max="100" value="50" class="slider" id="proteinRange" name="proteinRange">
 				</div>
 				Don't care about proteins?<input type="checkbox" id="proteinInclude" onClick="proteinAllow()">
+
+				<div>
+					<input type="checkbox" id="myCheckbox"/>
+					<label for="myCheckbox"> Vegetarian </label>
+
+
+					<input type="checkbox" id="myCheckbox2"/>
+					<label for="myCheckbox2"> Vegan </label>
+
+					<input type="checkbox" id="myCheckbox3"/>
+					<label for="myCheckbox3"> Peanut Free </label>
+
+					<input type="checkbox" id="myCheckbox4"/>
+					<label for="myCheckbox4"> Gluten Free </label>
+				</div>
+
 				<div class="sorting">
 					<p>Do you want to sort the results by price?
 							<select id="sortingInput" name="sortingInput" class="select-css">
@@ -213,14 +229,23 @@
 		    var protein = proteinSlider.disabled ? "None" : proteinSlider.value > 67 ? "High" : proteinSlider.value > 33 ? "Medium" : "Low";
 		    var similarSnacks = similarSnacksInput.value;
 				var sortingInput = document.getElementById("sortingInput").value;
-				// console.log(sortingInput.value);
+				var vegetarian = document.getElementById("myCheckbox").checked;
+				var vegan = document.getElementById("myCheckbox2").checked;
+				var peanut_free = document.getElementById("myCheckbox3").checked;
+				var gluten_free = document.getElementById("myCheckbox4").checked;
+				console.log(sortingInput.value);
 
 				var obj = {
 					fat: fat,
 					carb: carb,
 					protein: protein,
 					similarSnacks: similarSnacks,
-					sortingInput: sortingInput
+					sortingInput: sortingInput,
+					vegetarian: vegetarian,
+					vegan: vegan,
+					peanut_free: peanut_free,
+					gluten_free: gluten_free
+
 				};
 
 				$.ajax({
