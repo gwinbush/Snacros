@@ -191,8 +191,6 @@
 			  return entry[0] === data12[value];
 			}
 
-
-
 			function sortByPrice(data){
 				if (data[0][7] == "LowToHigh") {
 					data = data.sort(function(a,b) {
@@ -208,6 +206,20 @@
 			}
 
 			function printResults(data){
+
+				console.log(data);
+				document.getElementById("results").innerHTML = "";
+				var i;
+				if (data.length == 0){
+					$('#results').append('<p> No Results Found </p>');
+				}
+				else {
+
+					document.getElementById("results").innerHTML = "";
+					dataCopy = data;
+					data = data.slice(0,12);
+					console.log(data)
+				}
 
 				sortByPrice(data);
 				// document.getElementById("results").innerHTML = "";
@@ -283,16 +295,16 @@
 				
 				var http = new XMLHttpRequest();
 				http.onreadystatechange = function() {
-				if (this.readyState == 4 && this.status == 200) {
-					// Typical action to be performed when the document is ready:
-					printResults(JSON.parse(http.response));
-					scrollToResults();
-					var oUrl = window.location.href;
-					var oUrlSplit = oUrl.split('?')[0];
-					history.pushState({
-						id: "results"
-					}, 'Snacros', (oUrlSplit == '' ? oUrl : oUrlSplit) + url);
-					}
+					if (this.readyState == 4 && this.status == 200) {
+						// Typical action to be performed when the document is ready:
+						printResults(JSON.parse(http.response));
+						scrollToResults();
+						var oUrl = window.location.href;
+						var oUrlSplit = oUrl.split('?')[0];
+						history.pushState({
+							id: "results"
+						}, 'Snacros', (oUrlSplit == '' ? oUrl : oUrlSplit) + url);
+						}
 				};
 				http.open('GET', "/filters"+url, true);
 				http.send()
