@@ -14,7 +14,9 @@
 				<a href="https://snacros-v2.herokuapp.com/" style="color: white"> <b>Prototype 2</b> </a>
 			</div>
 			<div id="title">
-				<h1 class="text">Snacros</h1>
+				<a href="/">
+					<h1 class="text">Snacros</h1>
+				</a>
 				<!-- image gotten from https://unsplash.com/photos/oWN1tKuUpJI (@amoon ra -->
 			</div>
 		</div>
@@ -57,7 +59,7 @@
 				</div>
 
 				<div class="sorting">
-					<p>Do you want to sort the results by price?
+					<p>Sort results by price?
 							<select id="sortingInput" name="sortingInput" class="select-css">
 								<option value="No" selected="selected">No</option>
 							  <option value="HighToLow">High to Low</option>
@@ -66,7 +68,7 @@
 				</p>
 				</div>
 				<div id="similarSnacksInput">
-					<input placeholder="Snacks that you like" name="similarSnacks" id="similarSnacks" type="text" onkeydown="if (event.keyCode == 13)
+					<input placeholder="Preferred Snacks or Flavors?" name="similarSnacks" id="similarSnacks" type="text" onkeydown="if (event.keyCode == 13)
                         document.getElementById('submitBtn').click()"></input>
 				</div>
 				<div id="submit">
@@ -76,28 +78,28 @@
 		</form>
 
 		<div id="resultsContainer">
-			<div id="results">
+			<div id="results"></div>
 		</div>
 
 		<script>
 
-		var posX;
-		var posY;
-		var listOfResultsDeleted = []
-		var data;
-		var dataCopy;
+			var posX;
+			var posY;
+			var listOfResultsDeleted = []
+			var data;
+			var dataCopy;
 
-		$("body").mousemove(function(e) {
-			posX = e.pageX;
-			posY = e.pageY;
-		})
+			$("body").mousemove(function(e) {
+				posX = e.pageX;
+				posY = e.pageY;
+			})
 
-		var carbSlider = document.getElementById("carbRange");
-		var fatSlider = document.getElementById("fatRange");
-		var proteinSlider = document.getElementById("proteinRange");
-		var similarSnacksInput = document.getElementById("similarSnacks");
-		var sortingInput = document.getElementById("sortingInput");
-		// console.log(sortingInput.value);
+			var carbSlider = document.getElementById("carbRange");
+			var fatSlider = document.getElementById("fatRange");
+			var proteinSlider = document.getElementById("proteinRange");
+			var similarSnacksInput = document.getElementById("similarSnacks");
+			var sortingInput = document.getElementById("sortingInput");
+			// console.log(sortingInput.value);
 
 			function carbAllow() {
 				var carbCheck = document.getElementById("carbInclude");
@@ -153,6 +155,7 @@
 				}
 				output.style.top =  pos - 50 +'px';
 			}
+
 			function releaseUpdate(vol) {
 				var output = document.querySelector(".volume");
 				output.value = vol;
@@ -170,10 +173,11 @@
 				listOfResultsDeleted.push(value);
 				dataCopy.splice(value,1);
 				return printResults(dataCopy);
-			};
+			}
 
 			function printResults(data){
-				document.getElementById("results").innerHTML = "";
+				// document.getElementById("results").innerHTML = "";
+
 				for (i = 0; i < 12; i++) {
 
 					fatPercentage = data[i][1].fat;
@@ -219,9 +223,13 @@
 				};
 			};
 
+			var elmnt = document.getElementById("refresh");
+
+			function scrollToResults() {
+			  elmnt.scrollIntoView(true); // Top
+			}
 
 			function show() {
-
 				document.getElementById("results").innerHTML = "";
 
 				$('#results')
@@ -236,74 +244,91 @@
 				var vegan = document.getElementById("myCheckbox2").checked;
 				var peanut_free = document.getElementById("myCheckbox3").checked;
 				var gluten_free = document.getElementById("myCheckbox4").checked;
-				console.log(sortingInput.value);
-
-				var obj = {
-					fat: fat,
-					carb: carb,
-					protein: protein,
-					similarSnacks: similarSnacks,
-					sortingInput: sortingInput,
-					vegetarian: vegetarian,
-					vegan: vegan,
-					peanut_free: peanut_free,
-					gluten_free: gluten_free
-
-				};
-
-				$.ajax({
-					url: '/filters',
-					data: obj,
-					type: 'POST',
-					success: function(data){
-
-						document.getElementById("results").innerHTML = "";
-
-						data=$.parseJSON( data );
-						console.log(data);
-						document.getElementById("results").innerHTML = "";
-						var i;
-						if (data.length == 0){
-							$('#results').append('<p> No Results Found </p>');
-
-						}
-						else {
-
-							document.getElementById("results").innerHTML = "";
-							dataCopy = data;
-							data = data.slice(0,12);
-							console.log(data)
-
-							if (data[0][7] == "LowToHigh") {
-								data = data.sort(function(a,b) {
-									return a[6].price - b[6].price;
-									// console.log
-								});
-							}
-
-							if (data[0][7] == "HighToLow") {
-								data = data.sort(function(a,b) {
-									return b[6].price - a[6].price;
-									// console.log
-								});
-							};
-
-							printResults(data);
-
-						};
-						scrollToResults();
-					},
-					error: function(error){
-						console.log(error);
+				var url = '?fat='+fat+"&carb="+carb+"&protein="+protein+
+					'&similarSnacks='+similarSnacks+'&sortingInput='+sortingInput+'&vegetarian='+
+					vegetarian+'&vegan='+vegan+'&peanutFree='+peanut_free+'&glutenFree='+gluten_free;
+				
+				var http = new XMLHttpRequest();
+				http.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					// Typical action to be performed when the document is ready:
+					printResults(JSON.parse(http.response));
+					scrollToResults();
+					var oUrl = window.location.href;
+					var oUrlSplit = oUrl.split('?')[0];
+					history.pushState({
+						id: "results"
+					}, 'Snacros', (oUrlSplit == '' ? oUrl : oUrlSplit) + url);
 					}
-			});
+				};
+				http.open('GET', "/filters"+url, true);
+				http.send()
 			}
 
-			var elmnt = document.getElementById("results");
+				// var obj = {
+				// 	fat: fat,
+				// 	carb: carb,
+				// 	protein: protein,
+				// 	similarSnacks: similarSnacks,
+				// 	sortingInput: sortingInput,
+				// 	vegetarian: vegetarian,
+				// 	vegan: vegan,
+				// 	peanut_free: peanut_free,
+				// 	gluten_free: gluten_free
 
-			function scrollToResults() {
-			  elmnt.scrollIntoView(true); // Top
-			}
+				// };
+
+			// 	$.ajax({
+			// 		url: '/filters?fat='+fat+"&carb="+carb+"&protein="+protein+
+			// 		'&similarSnacks='+similarSnacks+'&sortingInput='+sortingInput+'&vegetarian='+
+			// 		vegetarian+'&vegan='+vegan+'&peanutFree='+peanut_free+'&glutenFree='+gluten_free,
+			// 		// data: obj,
+			// 		type: 'GET',
+			// 		error: function(error){
+			// 		console.log(error);
+			// 		}
+			// 	})
+			// 	.done(function(data){
+
+			// 			document.getElementById("results").innerHTML = "";
+
+			// 			data=$.parseJSON( data );
+			// 			console.log(data);
+			// 			document.getElementById("results").innerHTML = "";
+			// 			var i;
+			// 			if (data.length == 0){
+			// 				$('#results').append('<p> No Results Found </p>');
+
+			// 			}
+			// 			else {
+
+			// 				document.getElementById("results").innerHTML = "";
+			// 				dataCopy = data;
+			// 				data = data.slice(0,12);
+			// 				console.log(data)
+
+			// 				if (data[0][7] == "LowToHigh") {
+			// 					data = data.sort(function(a,b) {
+			// 						return a[6].price - b[6].price;
+			// 						// console.log
+			// 					});
+			// 				}
+
+			// 				if (data[0][7] == "HighToLow") {
+			// 					data = data.sort(function(a,b) {
+			// 						return b[6].price - a[6].price;
+			// 						// console.log
+			// 					});
+			// 				};
+
+			// 				printResults(data);
+
+			// 			};
+			// 			scrollToResults();
+			// 		})
+			// }
+
+			
 		</script>
 
 		<div id="netids" class="text">

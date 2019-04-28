@@ -99,17 +99,17 @@ def index():
 # 	dumps = json.dumps({'status':'OK','fat':fat,'carb':carb,'protein':protein, 'similarSnacks':similarSnacks});
 # 	return dumps;
 
-@app.route('/filters', methods=['POST'])
+@app.route('/filters', methods=['GET'])
 def filters():
-	fatLevel = request.form.get('fat');
-	carbLevel = request.form.get('carb');
-	proteinLevel = request.form.get('protein');
-	query = request.form.get('similarSnacks');
-	sortingInput = request.form.get('sortingInput');
-	vegetarian = request.form.get('vegetarian');
-	vegan = request.form.get('vegan');
-	peanut_free = request.form.get('peanut_free');
-	gluten_free = request.form.get('gluten_free');
+	fatLevel = request.args.get('fat');
+	carbLevel = request.args.get('carb');
+	proteinLevel = request.args.get('protein');
+	query = request.args.get('similarSnacks');
+	sortingInput = request.args.get('sortingInput');
+	vegetarian = request.args.get('vegetarian');
+	vegan = request.args.get('vegan');
+	peanut_free = request.args.get('peanut_free');
+	gluten_free = request.args.get('gluten_free');
 
 	filtered_snacks = {}
 	
