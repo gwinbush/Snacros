@@ -86,6 +86,7 @@
 		var listOfResultsDeleted = []
 		var data;
 		var dataCopy;
+		var data12;
 
 		$("body").mousemove(function(e) {
 			posX = e.pageX;
@@ -168,11 +169,45 @@
 
 			function deleteFunction(value){
 				listOfResultsDeleted.push(value);
-				dataCopy.splice(value,1);
-				return printResults(dataCopy);
+				// console.log(value);
+				// console.log(data12);
+				// console.log(data12[value])
+				var ind = dataCopy.map(function(e) { return e[0]; }).indexOf(data12[value][0]);
+				// console.log(ind);
+				dataCopy.splice(ind,1);
+				data12.splice(value,1);
+				data12.push(dataCopy[12]);
+				// data.push(dataCopy.);
+				// dataNew = dataCopy.slice(0,13);
+				// dataNew.splice(value,1);
+				sortByPrice(data12);
+				return printResults(data12);
 			};
 
+			function findEntry(entry,value) {
+			  return entry[0] === data12[value];
+			}
+
+
+
+			function sortByPrice(data){
+				if (data[0][7] == "LowToHigh") {
+					data = data.sort(function(a,b) {
+						return a[6].price - b[6].price;
+					});
+				}
+
+				if (data[0][7] == "HighToLow") {
+					data = data.sort(function(a,b) {
+						return b[6].price - a[6].price;
+					});
+				}
+			}
+
 			function printResults(data){
+
+				sortByPrice(data);
+
 				document.getElementById("results").innerHTML = "";
 				for (i = 0; i < 12; i++) {
 
@@ -236,7 +271,7 @@
 				var vegan = document.getElementById("myCheckbox2").checked;
 				var peanut_free = document.getElementById("myCheckbox3").checked;
 				var gluten_free = document.getElementById("myCheckbox4").checked;
-				console.log(sortingInput.value);
+				// console.log(sortingInput.value);
 
 				var obj = {
 					fat: fat,
@@ -272,21 +307,8 @@
 							document.getElementById("results").innerHTML = "";
 							dataCopy = data;
 							data = data.slice(0,12);
+							data12 = data;
 							console.log(data)
-
-							if (data[0][7] == "LowToHigh") {
-								data = data.sort(function(a,b) {
-									return a[6].price - b[6].price;
-									// console.log
-								});
-							}
-
-							if (data[0][7] == "HighToLow") {
-								data = data.sort(function(a,b) {
-									return b[6].price - a[6].price;
-									// console.log
-								});
-							};
 
 							printResults(data);
 
