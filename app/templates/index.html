@@ -393,9 +393,13 @@
 				var qPeanutFree = queryParams.get("peanutFree");
 				var qGlutenFree = queryParams.get("glutenFree");
 				
-				document.getElementById("fatRange").value = qFat;
-				document.getElementById("carbRange").value = qCarb;
-				document.getElementById("proteinRange").value = qProtein;
+				var fatSlide = document.getElementById("fatRange");
+				var carbSlide = document.getElementById("carbRange");
+				var proteinSlide = document.getElementById("proteinRange");
+
+				if (qFat == "None") { document.getElementById("fatInclude").checked = true; fatAllow() } else { fatSlide.value = qFat; }
+				if (qCarb == "None") { document.getElementById("carbInclude").checked = true; carbAllow() } else { carbSlide.value = qCarb; }
+				if (qProtein == "None") { document.getElementById("proteinInclude").checked = true; proteinAllow() } else { proteinSlide.value = qProtein; }
 				document.getElementById("similarSnacks").value = qSimilarSnacks;
 				document.getElementById("sortingInput").value = qSortingInput;
 				qVegetarian == "true" ? document.getElementById("myCheckbox").checked = true : document.getElementById("myCheckbox").checked = false;
