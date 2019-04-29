@@ -65,6 +65,8 @@ def remove_snacks():
 			titles_to_remove.append(title)
 		if 'seasoning' in title.lower():
 			titles_to_remove.append(title)
+		if title == 'Sistema Microwave Noodle Bowl 940ml':
+			titles_to_remove.append(title)
 		if titles_to_asin[title] == 'B00DGXB3AE':
 			titles_to_remove.append(title)
 
