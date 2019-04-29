@@ -112,9 +112,7 @@ def filters():
 	gluten_free = request.args.get('gluten_free');
 
 	#convert ints to levels
-	if fatLevel == None:
-		fatLevel = 'None'
-	else:
+	if fatLevel != 'None':
 		fatLevel = int(fatLevel)
 		if fatLevel<33:
 			fatLevel = "Low"
@@ -123,9 +121,7 @@ def filters():
 		else:
 			fatLevel = "High"
 
-	if carbLevel == None:
-		carbLevel = 'None'	
-	else:
+	if carbLevel != 'None':
 		carbLevel = int(carbLevel)
 		if carbLevel<33:
 			carbLevel = "Low"
@@ -134,9 +130,7 @@ def filters():
 		else:
 			carbLevel = "High"
 
-	if proteinLevel == None:
-		proteinLevel = 'None'
-	else:
+	if proteinLevel != 'None':
 		proteinLevel = int(proteinLevel)
 		if proteinLevel<33:
 			proteinLevel = "Low"
