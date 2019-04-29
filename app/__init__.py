@@ -101,9 +101,9 @@ def index():
 
 @app.route('/filters', methods=['GET'])
 def filters():
-	fatLevel = int(request.args.get('fat'));
-	carbLevel = int(request.args.get('carb'));
-	proteinLevel = int(request.args.get('protein'));
+	fatLevel = request.args.get('fat');
+	carbLevel = request.args.get('carb');
+	proteinLevel = request.args.get('protein');
 	query = request.args.get('similarSnacks');
 	sortingInput = request.args.get('sortingInput');
 	vegetarian = request.args.get('vegetarian');
@@ -115,16 +115,18 @@ def filters():
 	if fatLevel == None:
 		fatLevel = 'None'
 	else:
+		fatLevel = int(fatLevel)
 		if fatLevel<33:
 			fatLevel = "Low"
 		elif fatLevel >=33 and fatLevel<67:
 			fatLevel = "Medium"
 		else:
 			fatLevel = "High"
-			
+
 	if carbLevel == None:
 		carbLevel = 'None'	
 	else:
+		carbLevel = int(carbLevel)
 		if carbLevel<33:
 			carbLevel = "Low"
 		elif carbLevel >=33 and carbLevel<67:
@@ -135,6 +137,7 @@ def filters():
 	if proteinLevel == None:
 		proteinLevel = 'None'
 	else:
+		proteinLevel = int(proteinLevel)
 		if proteinLevel<33:
 			proteinLevel = "Low"
 		elif proteinLevel >=33 and proteinLevel<67:
