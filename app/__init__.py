@@ -108,8 +108,8 @@ def filters():
 	sortingInput = request.args.get('sortingInput');
 	vegetarian = request.args.get('vegetarian');
 	vegan = request.args.get('vegan');
-	peanut_free = request.args.get('peanut_free');
-	gluten_free = request.args.get('gluten_free');
+	peanut_free = request.args.get('peanutFree');
+	gluten_free = request.args.get('glutenFree');
 
 	#convert ints to levels
 	if fatLevel != 'None':
