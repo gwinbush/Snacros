@@ -12,7 +12,7 @@
 			<div id="Prototypes">
 				<a href="https://snacros.herokuapp.com/" style="color: white"> <b>Prototype 1</b> </a> <br>
 				<a href="https://snacros-v2.herokuapp.com/" style="color: white"> <b>Prototype 2</b> </a><br>
-				<a href="https://snacros-v3.herokuapp.com/" style="color: white"> <b>Prototype 3</b> </a><br>
+				<a href="http://35.236.225.172:5000/" style="color: white"> <b>Prototype 3</b> </a><br>
 			</div>
 			<div id="title">
 				<a href="/">
@@ -79,17 +79,17 @@
 		</form>
 
 		<div id="resultsContainer">
-			<div id="results"></div>
+			<div id="results">
 		</div>
 
 		<script>
 
-		var posX;
-		var posY;
-		var listOfResultsDeleted = []
-		var data;
-		var dataCopy;
-		var data12;
+			var posX;
+			var posY;
+			var listOfResultsDeleted = []
+			var data;
+			var dataCopy;
+			var data12;
 
 			$("body").mousemove(function(e) {
 				posX = e.pageX;
@@ -288,9 +288,9 @@
 				$('#results')
 					.append('<div class="loader"></div>')
 
-				var fat = fatSlider.disabled ? "None" : fatSlider.value > 67 ? "High" : fatSlider.value > 33 ? "Medium" : "Low";
-				var carb = carbSlider.disabled ? "None" : carbSlider.value > 67 ? "High" : carbSlider.value > 33 ? "Medium" : "Low";
-		    var protein = proteinSlider.disabled ? "None" : proteinSlider.value > 67 ? "High" : proteinSlider.value > 33 ? "Medium" : "Low";
+				var fat = fatSlider.disabled ? "None" : fatSlider.value.toString();
+				var carb = carbSlider.disabled ? "None" : carbSlider.value.toString();
+		    var protein = proteinSlider.disabled ? "None" : proteinSlider.value.toString();
 		    var similarSnacks = similarSnacksInput.value;
 				var sortingInput = document.getElementById("sortingInput").value;
 				var vegetarian = document.getElementById("myCheckbox").checked;
@@ -380,6 +380,30 @@
 			// 			scrollToResults();
 			// 		})
 			// }
+
+			if (window.location.href.split('?').length > 1) {
+				var queryParams = new URLSearchParams(window.location.search);
+				var qFat = queryParams.get("fat");
+				var qCarb = queryParams.get("carb");
+				var qProtein = queryParams.get("protein");
+				var qSimilarSnacks = queryParams.get("similarSnacks");
+				var qSortingInput = queryParams.get("sortingInput");
+				var qVegetarian = queryParams.get("vegetarian");
+				var qVegan = queryParams.get("vegan");
+				var qPeanutFree = queryParams.get("peanutFree");
+				var qGlutenFree = queryParams.get("glutenFree");
+				
+				document.getElementById("fatRange").value = qFat;
+				document.getElementById("carbRange").value = qCarb;
+				document.getElementById("proteinRange").value = qProtein;
+				document.getElementById("similarSnacks").value = qSimilarSnacks;
+				document.getElementById("sortingInput").value = qSortingInput;
+				qVegetarian == "true" ? document.getElementById("myCheckbox").checked = true : document.getElementById("myCheckbox").checked = false;
+				qVegan == "true" ? document.getElementById("myCheckbox2").checked = true : document.getElementById("myCheckbox2").checked = false;
+				qPeanutFree == "true" ? document.getElementById("myCheckbox3").checked = true : document.getElementById("myCheckbox3").checked = false;
+				qGlutenFree == "true" ? document.getElementById("myCheckbox4").checked = true : document.getElementById("myCheckbox4").checked = false;
+				show();
+			}
 
 
 		</script>
