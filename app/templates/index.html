@@ -238,6 +238,7 @@
 					sortingInput = data[i][7]
 					description = data[i][6]["description"]
 					description = description.substring(0,200)
+					matched = data[i][8]
 
 					if (price == null) {
 						price = "Price not available"
@@ -260,6 +261,7 @@
 						"<b>Carb:</b> " + (carbPercentage).toFixed(2) + " g<br>" +
 						"<b>Protein:</b> " + (proteinPercentage).toFixed(2) + " g<br>" +
 						"<b>Price:</b> " + price + "<br><br>" +
+						"<b>Matched:</b> " + matched + "<br><br>" +
 						"<b>Description:</b> " + description + "... Read more on Amazon" +
 						"</p><p><a href=\"" + url + "\">" +
 						"<img id=\"amazonImg\"border=\"0\" src=\"../static/buy_on_amazon.jpg\" width=\"200\">"
