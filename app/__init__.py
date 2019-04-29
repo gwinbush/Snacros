@@ -111,6 +111,28 @@ def filters():
 	peanut_free = request.args.get('peanut_free');
 	gluten_free = request.args.get('gluten_free');
 
+	#convert ints to levels
+	if fatLevel<33:
+		fatLevel = "Low"
+	elif fatLevel >=33 and fatLevel<67:
+		fatLevel = "Medium"
+	else:
+		fatLevel = "High"
+
+	if carbLevel<33:
+		carbLevel = "Low"
+	elif carbLevel >=33 and carbLevel<67:
+		carbLevel = "Medium"
+	else:
+		carbLevel = "High"
+
+	if proteinLevel<33:
+		proteinLevel = "Low"
+	elif proteinLevel >=33 and proteinLevel<67:
+		proteinLevel = "Medium"
+	else:
+		proteinLevel = "High"
+
 	filtered_snacks = {}
 	
 	# nutrient_match = {}
@@ -197,7 +219,7 @@ def filters():
 		snack_ind = title_to_index[snack]
 		matched = ''
 		for word, sim_lst in word_sims_lst:
-			if sim_lst[snack_ind] > 0.60:
+			if sim_lst[snack_ind] > 0.7:
 				matched = matched + ' ' + word + ','
 			word_svd_score += sim_lst[snack_ind]
 		does_cooccur = snack in all_data[query_snack]['also_bought']
