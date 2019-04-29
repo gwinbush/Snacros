@@ -254,7 +254,8 @@ h3{
   padding-left: 40px;
   font-family: "Neucha", -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 16pt;
-  border-radius: 10px;
+  border-radius: 50px;
+  border:solid 2px #7d7d7d;
   height: 80px;
   width: 40%;
 }
