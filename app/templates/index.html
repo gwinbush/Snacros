@@ -180,6 +180,8 @@
 				dataCopy.splice(ind,1);
 				data12.splice(value,1);
 				data12.push(dataCopy[12]);
+				// console.log("dataCopy    ",dataCopy);
+				// console.log("datacopy[12]     ",dataCopy[12]);
 				// data.push(dataCopy.);
 				// dataNew = dataCopy.slice(0,13);
 				// dataNew.splice(value,1);
@@ -216,8 +218,11 @@
 				else {
 
 					document.getElementById("results").innerHTML = "";
-					dataCopy = data;
+					if (data.length > 12) {
+						dataCopy = data;
+					}
 					data = data.slice(0,12);
+					data12 = data;
 					console.log(data)
 				}
 
@@ -237,7 +242,7 @@
 					price = data[i][6]["price"]
 					sortingInput = data[i][7]
 					description = data[i][6]["description"]
-					description = description.substring(0,200)
+					description = description.substring(0,150)
 					matched = data[i][8]
 
 					if (price == null) {
@@ -294,7 +299,7 @@
 				var url = '?fat='+fat+"&carb="+carb+"&protein="+protein+
 					'&similarSnacks='+similarSnacks+'&sortingInput='+sortingInput+'&vegetarian='+
 					vegetarian+'&vegan='+vegan+'&peanutFree='+peanut_free+'&glutenFree='+gluten_free;
-				
+
 				var http = new XMLHttpRequest();
 				http.onreadystatechange = function() {
 					if (this.readyState == 4 && this.status == 200) {
@@ -375,7 +380,7 @@
 			// 		})
 			// }
 
-			
+
 		</script>
 
 		<div id="netids" class="text">
